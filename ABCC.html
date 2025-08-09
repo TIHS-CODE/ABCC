@@ -1,0 +1,2520 @@
+<!-- Hi. If you're reading this then I will assume you know the basic shit already. -->
+<!-- ao20250808: Initial Release. -->
+<!DOCTYPE html>
+<html class="dark">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<title>ABCC</title>
+	
+	<!-- Added -->
+	<style>
+		:root {
+			--color-tab-back: #111;
+			--color-tab-inactive: #111;
+			--color-sheet-back: #333;
+			--white: #ffffff;
+		}
+		body{
+			color: white;
+			font-family: system-ui, Roboto, Arial, sans-serif;
+			background-color: var(--color-sheet-back);
+			margin: 0;
+		}
+		#divLightkeeper{
+			display: none;
+			/*position: fixed;
+			bottom: 0px;*/
+			width: 100%;
+			background-color: #dedede; 
+			color: #000;
+		}
+		.div-center{
+			width: fit-content;
+			margin: 0 auto;
+		}
+		.sub-body{
+			border-radius: .5rem;
+			background-color: #333;
+			padding: .25rem .75rem;
+		}
+		
+		.border{
+			border: 1px solid;
+			border-radius: .25rem;
+			padding: .25rem;
+			max-width: calc(100% - 2px);
+		}
+		.btn{
+			display: inline-block;
+			border-style: solid; 
+			border-width: 1px;
+			border-radius: .5rem;
+			padding: .1rem .25rem;
+			text-align: center;
+			text-decoration: none;
+			vertical-align: middle;
+			width: fit-content;
+			background-color: #444 !important;
+
+			/*Prevent selecting text on double click*/
+			user-select: none; /* standard syntax */
+			-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+			-moz-user-select: none; /* mozilla browsers */
+			-khtml-user-select: none; /* webkit (konqueror) browsers */
+			-ms-user-select: none; /* IE10+ */
+		}
+		.btn:hover{
+			cursor: pointer;
+			color: #000 !important;
+			background-color: #FFF !important;
+		}
+		.btn-block-new-form{
+			padding: .1rem .5rem;
+		}
+		.form-control{
+			background: #333;
+			color: #bbb;
+			border: 1px solid #555;
+			border-radius: .25rem;     
+			width: calc(100% - 1.5rem);
+			margin: .1rem 0;
+    		padding: .3rem .7rem;
+			font-size: inherit;
+		}
+		.form-control::placeholder{
+			color: #666 !important;
+		}
+		.fl{
+			float: left;
+		}
+		.fr{
+			float: right;
+		}
+		.w100{
+			width: 100%;
+		}
+		.text-center{
+			text-align: center;
+		}
+		.text-right{
+			text-align: right;
+		}
+		.btn-block-new-form{/*.form-new-block*/
+			margin-top: .251rem;
+		}
+		@media screen and (max-width: 1111px) {
+			.dr-stuck{
+				min-width: calc(100vw - 2px) !important;
+			}
+			.sheet{
+				width: auto !important;
+			}
+		}
+	</style>
+
+	<!-- Tabs & Sheets -->
+	<style>
+		#divTabs{
+			display: flex; 
+			overflow-x: auto; 
+			background-color: var(--color-tab-back); 
+			/*border-color: #FFF; 
+			border-bottom-style: solid; 
+			border-width: 2px;*/
+		}
+		#divQuickControls{
+			background-color: var(--color-sheet-back); 
+			overflow-x: auto; 
+			border-style: double; 
+			border-width: 3px; 
+			padding: .25rem; 
+			min-height: calc(1.5rem + 2px);
+  			white-space: nowrap;
+			width: calc(100% - (.5rem + 6px)); /*Remove Padding and Border*/
+		}
+		.qc{
+  			display: inline-block;
+		}
+		.tab{
+			width: fit-content; 
+			padding: 0 .25rem;
+			margin-right: -2px;
+			border-style: solid solid none solid; 
+			border-width: 2px; 
+			border-top-left-radius: .75rem; 
+			border-top-right-radius: .75rem;
+			border-color: rgb(255, 255, 255, .5);
+			background-color: var(--color-tab-inactive);
+			color: rgb(255, 255, 255, .75);
+			font-size: 1.25rem;
+			cursor: pointer;
+		}
+		.tab-active{
+			z-index: 0;
+			border-color: #FFF #FFF var(--color-sheet-back) #FFF;
+			color: #FFF;
+			background-color: var(--color-sheet-back);
+			/*z-index: 0;
+			border-style: solid;
+			margin-bottom: -2px;*/
+		}
+		.sheet{
+			margin: .25rem;
+			padding: .25rem;
+			padding-top: 5rem;/*
+			background-color: #333;*/
+			width: 75%; 
+			max-width: 1500px !important; 
+			margin: auto;
+		}
+		.sheet-block{
+			box-sizing: border-box;
+			display: block; 
+			float: left; 
+			max-width: inherit;
+		}
+		.tbl-sheets-header{
+			padding: .5rem;
+			border: 1px solid #FFF;
+		}
+
+	</style>
+
+	<!-- Dice Roller -->
+	<style>
+		#headDiceRoller{
+			border-style: solid; 
+			border-width: 1px; 
+			border-top-left-radius: .75rem; 
+			border-top-right-radius: .75rem; 
+			padding: .25rem; 
+			min-height: calc(1.5rem + 2px);
+		}
+		#bodyDiceRoller{
+			border: 1px solid; 
+			border-top-style: none; 
+			padding: .5rem;
+		}
+		.dr-stuck {
+			position: fixed;
+   			bottom: 1px;
+   			right: 1px;
+			max-width: 33vw;
+		}
+	</style>
+
+	<!-- Margins & Paddings -->
+	<style>
+		.m-1{
+			margin: .25rem;
+		}
+		.m-2{
+			margin: .5rem;
+		}
+		.m-3{
+			margin: 1rem;
+		}
+		.mt-1{
+			margin-top: .25rem;
+		}
+		.mt-2{
+			margin-top: .5rem;
+		}
+		.mt-3{
+			margin-top: 1rem;
+		}
+		.mb-1{
+			margin-bottom: .25rem !important;
+		}
+		.mb-2{
+			margin-bottom: .5rem !important;
+		}
+		.mb-3{
+			margin-bottom: 1rem;
+		}
+		.mr-1{
+			margin-right: .25rem;
+		}
+		.mr-2{
+			margin-right: .5rem;
+		}
+		.mr-3{
+			margin-right: 1rem;
+		}
+		.ml-1{
+			margin-left: .25rem;
+		}
+		.ml-2{
+			margin-left: .5rem;
+		}
+		.ml-3{
+			margin-left: 1rem;
+		}
+		.p-1{
+			padding: .25rem;
+		}
+		.p-2{
+			padding: .5rem;
+		}
+		.p-3{
+			padding: 1rem;
+		}
+	</style>
+
+	<!-- title -->
+	<style>
+	</style>
+</head>
+<body>	
+	<div style="min-height: 100%; min-width: 100%; ">
+		<div style="width: 100%;">
+			<div id="topbar" style="width: 100%; position: fixed;">
+				<div id="divTabs" style="padding: .25rem 0 0 .25rem;">
+					<span id="tabHome" class="tab tab-active" data-sheetID="0">Home</span>
+					<div id="endTabs"></div>
+				</div>
+				<div id="divQuickControls">
+					<span class="qc">Quick Controls: </span> 
+					<span id="btnTabNew" class="btn qc">Create New Tab</span>
+					<span id="btnTabEditSheet" class="btn qc" style="display: none;">Edit Sheet</span>
+					<span id="btnTabSaveSheet" class="btn qc btn-sheet-save" data-sheetID="current" style="display: none;">Save Sheet</span>
+					<div style="float: right;">
+							<span id="btnSheetsDisplayArray" class="btn qc" style="display: none;">Display Array</span>
+							<span id="btnSheetsDisplayStorage" class="btn qc" style="display: none;">Display Storage</span>
+						<span id="btnTabCloseAll" class="btn qc" style="display: none;">Close All Tabs</span>
+						<span id="btnTabClose" class="btn qc" style="display: none;">Close</span>
+					</div>
+				</div>
+			</div>
+			<div id="sheet0" class="sheet" style="padding-bottom: 2rem;">
+				<h1 style="margin-bottom: 0;">A Budget Character Creator</h1>
+				v0.1.1
+				<h6 style="margin: 0;">By: TIHS_CODE</h6>
+				<h6 style="margin: 0;"><a href="https://tihs-code.neocities.org/" target="_blank" class="btn" style="color: inherit;">Check out my other projects</a></h6>
+				<p>
+					Create a character sheet from scratch using blocks to your specifications.
+					<br>If you find the sheets too scrunched up enable Desktop site in your browser.
+				</p>
+				<hr>
+
+				<div id="homeCreateCharacter" class="mt-2 mb-3 border">
+					<h2 style="margin: .25rem; text-align: center;">Character Sheets: </h2>
+					<table id="tblSheets" class="w100 " style="max-height: 33vh; overflow-y:auto;">
+						<tbody id="tblSheetsBody">
+							<tr id="tblSheetsHeader" style="border-style: solid;">
+								<th scope="col" class="tbl-sheets-header" style="width: auto;">Sheet</th>
+								<th scope="col" class="tbl-sheets-header" style="width: auto;">Description</th>
+								<th scope="col" class="tbl-sheets-header" style="width: auto;">Created By</th>
+								<th scope="col" class="tbl-sheets-header" style="width: auto;">Actions</th>
+							</tr>
+						</tbody>
+					</table>
+					<div style="width: 100%; text-align: center;">
+						<hr>
+						<h3 id="tblSheetsImport" class="btn" style="margin: .25rem;">Show Import/Export</h3>
+						<div id="divImportBody" style="display: none;">
+							<textarea id="importClassString" rows="4" class="form-control" placeholder="Paste an export string here and click the Import button bellow to see it in the Character Sheets table above."></textarea>
+							<span id="btnSheetsImport" class="btn">Import</span>
+							<hr>
+							<h4 style="margin-bottom: .25rem;">Import Sheet Templates: </h4>
+							<span class="btn template-import" data-sheet="Tutorial">Tutorial</span>
+							<span class="btn template-import" data-sheet="Template: Daggerheart">Daggerheart</span>
+						</div>
+					</div>
+				</div>
+				
+				<div id="homeDiceRoller" class="mt-2 mb-3">
+					<div id="divDiceRoller" style="background-color: var(--color-sheet-back);">
+						<div id="headDiceRoller">
+							<strong style="font-size: 1.1rem; margin-right: .5rem;">Dice Roller</strong>
+							<div style="float: right;">
+								<div id="btnDiceRollerSticky" class="btn">Sticky</div>
+								<div id="btnDiceRollerMin" class="btn">Minimize</div>
+							</div>
+						</div>
+						<div id="bodyDiceRoller">
+							Input dice command:
+							<input id="txtDiceRoller" class="form-control" onkeydown="CheckRollDice(this)" placeholder="Number of Dice + d + Number of Dice's sides " style="margin: .1rem 0;"/>
+							Quick Dice:
+							<div class="btn q-dice">d20</div>
+							<div class="btn q-dice">d100</div>
+							<div class="btn q-dice">2d12</div>
+							<div class="btn q-dice">4d6</div>
+							<div class="btn q-dice">8d6</div>
+							<div class="" style="width: 100%; text-align: center; color: #ddd;">
+								<span id="tglDiceRollLog" class="btn" style="color: #eee">Dice Roll Log: </span>
+								<div id="divDiceRollLog" class="col-12" style="max-height: 33vh; overflow-y:auto; margin-top: 2px; padding: 2px; border: 1px solid;">
+									<div id="endDiceRollLog"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="homeUserData" class="mt-2 mb-3 border">
+					<div style="width: 100%; text-align: center;">
+						<h2 id="btnSettings" class="btn" style="margin: .25rem; text-align: center;">Settings: </h2>
+						<div id="divSettingsBody" style="display: none;">
+							<label for="newUserName" class=""
+								title="User Name"> User Name
+							</label>
+							<input id="newUserName" class="form-control" placeholder="Enter Username"/>
+							<div id="btnUpdateUserName" class="btn">Update User Name</div>
+							<hr>
+							<label for="setSaveNotif" class=""
+								title="Save Notification/Warning"> Save Notification/Warning
+							</label>
+
+							<select id="setSaveNotif" class="form-control"> 
+								<option value="0" selected>Show Save Notification/Warning </option> <!--the first time each browser refresh-->
+								<option value="1">DO NOT Show ANY Save Notification/Warning</option>
+								<option value="2">DO NOT Show Overwrite Save Notification/Warning</option>
+							</select> 
+							<div id="btnSetSaveNotif" class="btn">Update Save Notification/Warning</div>
+							<hr>
+
+							<label for="setResaveWarning" class=""
+								title="Experimental Warning"> Experimental Warning
+							</label>
+							<select id="setResaveWarning" class="form-control"> 
+								<option value="0" selected>Show Experimental Warning </option> 
+								<option value="1">DO NOT Show Experimental Warning</option>
+							</select> 
+							<div id="btnSetResaveWarning" class="btn">Update Experimental Warning</div>
+
+							<br><br>
+							<hr><hr><hr>
+							<h4 style="margin-bottom: .25rem;">---===[DANGER]===---</h4>
+							<span id="btnResetUserData" class="btn">Reset User Data</span>
+							<span id="btnDeleteAllSheets" class="btn">Delete All Sheets</span>
+						</div>
+					</div>
+				</div>
+				
+				<br>
+				<div id="divLightkeeper" > 
+					<a href="https://tihs-code.neocities.org/" target="_blank" style="color: #000;">
+						<marquee>
+							Lightkeepers: 0
+						</marquee>
+					</a> 
+				</div>
+			</div>
+
+			<div id="endSheets"></div>
+			<br>
+		</div>
+		<div id="footer"></div>
+	</div>
+	<script>
+		// === === === General Functions 1 === === === =====================================================================================================================================================================================================
+		var isLogged = true;
+		function ConLog(string, override = false){
+			//isLogged = true; //Uncomment to show ALL Logs
+			if(isLogged || override) console.log(string);
+		}
+		function SplitTrim(string, splitter = ","){ //ConLog(string);
+			return string.split(splitter).map((c) => c.trim()); //.map(function(cb) { return cb.trim(); });
+		}
+		function isValidX5(value){
+			return value && value != null && value != undefined && value != "null" && value != "undefined";
+		}
+
+		//Helper Functions
+		function ToggleDisplayById(name){
+			if(document.getElementById(name).style.display != "none"){
+				document.getElementById(name).style.display = "none";
+			}else{
+				document.getElementById(name).style.display = "block";
+			}
+		}
+		function DisplayById(name, newDisplay){
+			document.getElementById(name).style.display = newDisplay;
+		}
+		function DisplayByClass(name, newDisplay, sheetID = null){
+			let arrTemp = document.getElementsByClassName(name);
+			for(let i = 0; i < arrTemp.length; i++) {
+				let isVaild = sheetID == null || (sheetID != null && sheetID == arrTemp[i].getAttribute("data-sheetID"));
+				if(isVaild) arrTemp[i].style.display = newDisplay;
+			}
+		}
+		function BorderByClass(name, newBorder, sheetID = null, check = null){ //ConLog("BorderByClass, name: "+name+", newBorder: "+newBorder+", sheetID: "+sheetID+", check: "+check);
+			let arrTemp = document.getElementsByClassName(name);
+			for(let i = 0; i < arrTemp.length; i++) {
+				let isVaild = (sheetID == null || (sheetID != null && sheetID == arrTemp[i].getAttribute("data-sheetID"))) 
+							&& (check == null || (check != null && check == arrTemp[i].style.borderStyle))
+				if(isVaild) arrTemp[i].style.borderStyle = newBorder;
+			}
+		}
+		function AddClassByClass(name, forAddition, sheetID = null){
+			let arrTemp = document.getElementsByClassName(name);
+			for(let i = 0; i < arrTemp.length; i++) {
+				let isVaild = sheetID == null || (sheetID != null && sheetID == arrTemp[i].getAttribute("data-sheetID"));
+				if(isVaild)
+					arrTemp[i].classList.add(forAddition);
+			}
+		}
+		function RemoveClassByClass(name, forRemoval, sheetID = null){
+			let arrTemp = document.getElementsByClassName(name);
+			for(let i = 0; i < arrTemp.length; i++) {
+				let isVaild = sheetID == null || (sheetID != null && sheetID == arrTemp[i].getAttribute("data-sheetID"));
+				if(isVaild)
+					arrTemp[i].classList.remove(forRemoval);
+			}
+		}
+		function InnerHTMLByClass(name, newText, sheetID = null){
+			let arrTemp = document.getElementsByClassName(name);
+			for(let i = 0; i < arrTemp.length; i++) {
+				let isVaild = sheetID == null || (sheetID != null && sheetID == arrTemp[i].getAttribute("data-sheetID"));
+				if(isVaild)
+					arrTemp[i].innerHTML = newText;
+			}
+		}
+		function SetTogglables(){
+			let arrToggleables = document.getElementsByClassName("togglable-block");
+			for(let i = 0; i < arrToggleables.length; i++) {
+				arrToggleables[i].onclick = function() {
+					let target = this.getAttribute("data-target"); 
+					let forToggle = document.getElementById(target);
+					if(forToggle.classList.contains('is-active')){
+						forToggle.classList.remove('is-active');
+						DisplayById(target, "none");
+					}else{
+						forToggle.classList.add('is-active');
+						DisplayById(target, "block");
+					}
+				}
+			}
+		}
+
+
+
+
+		// === === === User Data === === === =====================================================================================================================================================================================================
+		var charName = "";
+		var userDataName = "User";//devName//
+		var userSaveNotif = "0"; // 0 = Show all, 1 = show none, 2 = do not show overwrite
+		var userResaveWarning = "0"; // 0 = Show all, 1 = show none
+		ConLog("defaults, userResaveWarning: "+userResaveWarning);
+		const devName = "ShitCode";
+		const storageUserData = "tihs-2025-abcc-storageUserData";
+		const defaultUserDataString = userDataName+","+userSaveNotif;
+		var setToggleExportAlert = 0; 
+
+		function GetUserData(){
+			return userDataName+","+userSaveNotif+","+userResaveWarning; //ConLog("GetUserData, userDataName: "+userDataName);
+		}
+
+		function DisplayUserData(){
+			document.getElementById("newUserName").value = (userDataName); 
+			document.getElementById("setSaveNotif").value = (userSaveNotif);
+			document.getElementById("setResaveWarning").value = (userResaveWarning); 
+		}
+
+		function LoadUserData(override = null){ 
+			let storageString = localStorage.getItem(storageUserData); 
+			storageString = override != null ? override
+				: (storageString ? storageString : defaultUserDataString) ;
+			let storageStringSplit = SplitTrim(storageString); //ConLog(storageUserData+", storageString: "+storageString, true);
+			let sMax = storageStringSplit.length;
+			let s = 0;
+			let temp = storageStringSplit[s++];
+			if(isValidX5(temp)) userDataName = temp; temp = storageStringSplit[s++];
+			if(isValidX5(temp)) userSaveNotif = temp; temp = storageStringSplit[s++]; 
+			if(isValidX5(temp)) userResaveWarning = temp; 
+			//if(!isValidX5(userDataName)) UpdateUserData(true,true);
+			DisplayUserData();
+		}
+
+		function UpdateUserData(isForReset = false, override = false){ 
+			let isConfirmed = isForReset && !override ? window.confirm("User data will be restored to the default. Continue with User Reset?") : true;
+			if (isConfirmed) {
+				let userData = isForReset ? defaultUserDataString : GetUserData(); //ConLog("UpdateUserData, userData: "+userData);
+				localStorage.setItem(storageUserData, userData);
+				LoadUserData();
+			}
+			DisplayUserData();
+		}
+
+		document.getElementById("btnUpdateUserName").onclick = function() {
+			let newUserName = document.getElementById("newUserName");
+			if(newUserName.value != devName){
+				userDataName = newUserName.value;
+				UpdateUserData();
+				alert("User Name updated to "+userDataName+"!")
+			}else alert("You can't be me.");
+		}
+
+		document.getElementById("btnSetSaveNotif").onclick = function() {
+			userSaveNotif = document.getElementById("setSaveNotif").value;
+			UpdateUserData();
+			alert("Save Notifications/Warnings updated!")
+		}
+
+		document.getElementById("btnSetResaveWarning").onclick = function() {
+			userResaveWarning = document.getElementById("setResaveWarning").value; 
+			UpdateUserData();
+			alert("Save Experimental Warnings updated!")
+		}
+
+		//Database Set up
+		LoadUserData();
+
+
+
+
+
+		// === === === Character Creator === === === =====================================================================================================================================================================================================
+		const actionTest = "!_!";
+		const actionCharSheet = "!C!";
+		const actionCharSheetInner = "!c!";
+		const actionBlock = "!B!";
+		const actionBlockInner = "!b!";
+		const actionGroup = "!G!";
+		const actionGroupInner = "!g!";
+		const actionStat = "!S!";
+		const actionStatInner = "!s!";
+		const actionBlockTemplate = "!BT!";
+		const actionBlockTemplateInner = "!bt!";
+			
+		//Using an Array to store each existing Class
+		var arrCharSheets = [];
+		var arrBlockTemplates = [];
+		
+		//Sheet and Tab variables
+		var sheetIdCount = 0;
+		var currentBlockID = 9;
+		var currentTab = 0;
+		var currentTabOpenCount = 0;
+
+		//Helpers for Class Object specific data
+		function GetActionArray(action){ 
+			return (action == actionCharSheet ? arrCharSheets 
+				: (action == actionBlockTemplate ? arrBlockTemplates 
+				: null));
+		}
+		function ClearActionArray(action){ 
+			if(action == actionCharSheet){
+				arrCharSheets = [];
+			}else if(action == actionBlockTemplate){
+				arrBlockTemplates = [];
+			}
+		}
+		function GetActionInner(action){
+			return (action == actionCharSheet ? actionCharSheetInner 
+				: (action == actionBlockTemplate ? actionBlockTeplateInner 
+				: null));
+		}
+		function FindInActionArray(action, findName, isIndexOnly = false){
+			let arrTemp = GetActionArray(action);
+			for(let i=0; i<arrTemp.length;i++){
+				if(arrTemp[i] != null && findName == arrTemp[i].name){
+					return isIndexOnly ? i : arrTemp[i];
+				}
+			}
+			return null;
+		}
+		function FindInArray(array, find, nameOnly = false){
+			for(let i=0; i<array.length;i++){
+				let flag = nameOnly ? array[i].name : array[i];
+				if(find == flag){
+					return array[i];
+				}
+			}
+			return null;
+		}
+		function VerifyNameInArray(action, findName){
+			let arrTemp = GetActionArray(action);
+			let isNameFound = false;
+			for(let i=0; i<arrTemp.length && !isNameFound;i++){ 
+				isNameFound = arrTemp[i] != null && findName == arrTemp[i].name;
+			}
+			if(isNameFound){
+				findName = findName + "_COPY"; 
+				findName = VerifyNameInArray(action, findName);
+			}
+			return findName;
+		}
+		function ArrayToString(action, isNameOnly = false, isForExport = false) {//ConLog("ArrayToString START: "+action);
+			let exportStringNames = "";
+			let finalList = "";
+			let arrTemp = GetActionArray(action);
+			for(let i=0; i<arrTemp.length;i++){
+				if(arrTemp[i] != null){
+					if(!isNameOnly){
+						finalList += i>0 ? action : "";
+						finalList += (action == actionCharSheet ? arrTemp[i].DetailsToString() 
+									: "");
+					}else{
+						exportStringNames += i>0 ? action : "";
+						exportStringNames += arrTemp[i].name;
+					}
+				}
+			}
+			finalList = !isNameOnly ? finalList : exportStringNames;
+			//finalList = !isForExport ? finalList : ExportNamesToClassString(action, exportStringNames);
+			//ConLog("ArrayToString ("+action+")["+arrTemp.length+"]: "+finalList);
+			return finalList;
+		}
+		document.getElementById("btnSheetsDisplayArray").onclick = function() {
+			ConLog("Current: \n"); ConLog(arrCharSheets);
+		}
+		document.getElementById("btnSheetsDisplayStorage").onclick = function() {
+			ConLog("Current: \n"+ArrayToString(actionCharSheet));
+			ConLog("Storage: \n"+localStorage.getItem(storageSheets));
+		}
+
+		//Create Table Row
+		function CreateTableRow(divID, id, sheet){
+			let htmlBtnOpen = `<div class="btn btn-sheet-open" data-sheetID="`+id+`">Open</div>`;
+			let htmlBtnExport = `<div class="btn btn-sheet-export" data-sheetID="`+id+`">Export</div>`;
+			let htmlBtnDelete = sheet.createdBy != userDataName ? "" : `<div class="btn btn-sheet-delete" data-sheetID="`+id+`">Delete</div>`;
+			let colActions = (divID == "tblSheetsBody" ? htmlBtnOpen + htmlBtnDelete + htmlBtnExport : "n/a");
+			if(divID = "tblSheetsBody" ){
+				let sheetID = id;
+				let row = 
+						`<tr id="tblSheet`+sheetID+`" data-index="`+sheetID+`" class="tbl-row text-center">
+							<td id="tblSheetName`+sheetID+`">`+sheet.name+`</td>
+							<td id="tblSheetDescription`+sheetID+`">`+sheet.description+`</td>
+							<td id="tblSheetCreatedBy`+sheetID+`">`+sheet.createdBy+`</td>
+							<td id="tblSheetActions`+sheetID+`">
+								`+htmlBtnOpen+htmlBtnExport+htmlBtnDelete+`
+							</td>
+						</tr>`;
+				return row;
+			}
+		}
+		//Update data of Table based on the Array
+		function UpdateTable(divID = "tblSheetsBody"){
+			let tblFinal = 	`<tr id="tblSheetsHeader" style="border-style: solid;">
+								<th scope="col" class="tbl-sheets-header" style="width: auto;">Sheet</th>
+								<th scope="col" class="tbl-sheets-header" style="width: auto;">Description</th>
+								<th scope="col" class="tbl-sheets-header" style="width: auto;">Created By</th>
+								<th scope="col" class="tbl-sheets-header" style="width: auto;">Actions</th>
+							</tr>`;
+			if(divID = "tblSheetsBody" ){
+				//ConLog("UpdateTable, arrCharSheets"); ConLog(arrCharSheets);
+				let sheetIdCountTemp = 0;
+				for (let s = 0; s < arrCharSheets.length; s++) {
+					tblFinal += arrCharSheets[s] != null ? CreateTableRow(divID, sheetIdCountTemp++, arrCharSheets[s]) : "";
+				}
+			}
+			document.getElementById(divID).innerHTML = tblFinal;
+		}
+		//Update data of Table based on the Array, optionally save to Storage
+		function UpdateAllClassTables(action){//ConLog("UpdateAllClassTables START: "+action);
+			if(action == actionCharSheet){
+				UpdateTable("#tblSheetsBody");
+			}else if(action == actionBlockTemplate){
+				UpdateTable("#tblBlockTemplatesBody");
+			}
+			SetSheetTableButtons();
+		}
+		//Insert the Class Objects in Array into Storage
+		const storageSheets = "tihs-2025-abcc-storageSheets";
+		function InsertArrayIntoStorage(action, reloadStorageString = false){ 
+			let storageItem = (action == actionCharSheet ? storageSheets : null); //ConLog("InsertArrayIntoStorage, action: "+action+", storageItem: "+storageItem);
+			localStorage.setItem(storageItem, ArrayToString(action)); //ConLog("GetActionArray("+action+")"); ConLog(GetActionArray(action)); ConLog(ArrayToString(action));
+			if(reloadStorageString) StorageStringToArray(storageItem);
+			UpdateAllClassTables(action);
+		}
+		//Using index, delete from an Array
+		function DeleteFromArray(action, index){ //ConLog("DeleteFromArray START");
+			let isConfirmed = window.confirm("This will be deleted permanently. Continue Deletion?");
+			if (isConfirmed) {
+				let arrToDeleteFrom = GetActionArray(action);
+				let storageItem = (action == actionCharSheet ? storageSheets 
+								: null);
+				arrToDeleteFrom[index] = null;
+				InsertArrayIntoStorage(action, true);
+			}
+		} 
+		//Delete All In Array based on action
+		function DeleteAllInArray(action){
+			let msgAction = (action == actionProgram ? "Programs" 
+							: "");
+			let isConfirmed = window.confirm("All "+msgAction+" will be deleted permanently. Continue Deletion?");
+			if (isConfirmed) {
+				ClearActionArray(action);
+				localStorage.removeItem('storage'+msgAction);
+				InsertArrayIntoStorage(action);
+				UpdateUserData(true, true);
+			}
+		};
+
+
+		// Set up Defaults variables 
+		var arrDefaultSheets = [];
+		var arrDefaultBlockTemplates = [];
+		function FindInDefaults(action, findName){
+			let arrTemp = (action == actionCharSheet ? arrDefaultSheets 
+				: (action == actionBlockTemplate ? arrDefaultBlockTemplates 
+				: null)); //ConLog("arrTemp: " + arrTemp);
+			let inner = GetActionInner(action);
+			for(let i=0; i<arrTemp.length;i++){
+				let temp = SplitTrim(arrTemp[i], inner); //ConLog("findName("+findName+") == temp[0]("+temp[0]+")");
+				if(findName == temp[0]) return true;
+			} 
+			return false;
+		}
+
+		//Update Cass String variabes
+		const flagOverwrite = "Overwrite";
+		const flagNew = "Create New";
+		const flagCopy = "Create Copy";
+		const flagReset = "Create New Default";
+		var arrImportStrings = null;
+		var isResetOngoing = false;
+
+		function UpdateClassStringInArrayInner(flag, action, classString){ //ConLog("UpdateClassStringInArrayInner, "+flag+", "+action+": "+classString);
+			let splitter = GetActionInner(action);
+			let className = SplitTrim(classString, splitter)[0]; 
+			if(flag == flagOverwrite){
+				let classForSave = FindInActionArray(action, className); //ConLog("UpdateClassStringInArrayInner, classForSave PRE: ");ConLog(classForSave);
+				classForSave.ImportStringToThis(classString, true); //ConLog("UpdateClassStringInArrayInner, classForSave POST: ");ConLog(classForSave);
+			}else if(flag == flagNew || flag == flagCopy || flag == flagReset){ 
+				let isImport = arrImportStrings != null && arrImportStrings.length > 0;
+				InsertClassStringIntoArray(action, classString, (flag == flagCopy && !isImport));
+			}
+			InsertArrayIntoStorage(action);
+			if(flag != flagReset && !isResetOngoing) {
+				let classSaved = FindInActionArray(action, className);
+				let alertClassText = className;
+				
+				let isForAlert = setToggleExportAlert == "0" && (userSaveNotif != 1);
+				if(isForAlert) alert(flag+" completed for "+alertClassText);
+			}
+			CheckImportString();
+		}
+		//Update an existing Class object in an Array, otherwise add it in the Array
+		function UpdateClassStringInArray(action, classString, isOverwrite = false, isReset = false){ //ConLog("UpdateClassStringInArray Start "+classString);
+			let splitter = GetActionInner(action);
+			let className = SplitTrim(classString, splitter)[0]; //ConLog(action+" className: "+className);
+			let classForSave = FindInActionArray(action, className); //ConLog("classForSave: "); ConLog(classForSave);
+			let isDefault = FindInDefaults(action, className);
+			let flag = null;
+			if(isReset){
+				flag = flagReset;
+				isResetOngoing = true;
+			}
+			if(classForSave != null && (isOverwrite || !isDefault || classForSave.createdBy == userDataName)){
+				//Update Existing
+				if(isOverwrite){
+					flag = flagOverwrite;
+				}else if(!isReset){
+					let isValid = userSaveNotif == 0 ? window.confirm("Name is already in use. Saving will overwrite the existing data. Continue Save?") : true;
+					if(isValid){
+						flag = flagOverwrite;
+						//Eventually find a way to give the create copy option
+						// ... flag = flagCopy;
+					}
+				}
+			}else if(!isReset){
+				//Create New
+				if(classForSave != null) {
+					alert("Cannot edit "+className+". Created copy instead.");
+					flag = flagCopy;
+				}else{
+					flag = flagNew;
+				}
+			}
+
+			if(flag != null){
+				UpdateClassStringInArrayInner(flag, action, classString);
+			}
+		}	
+		//Check Import String and 
+		function CheckImportString(){ //ConLog("CheckImportString, arrImportStrings: "); ConLog(arrImportStrings);
+			if(arrImportStrings != null && arrImportStrings.length > 0){
+				let initialImport = arrImportStrings.shift();
+				UpdateClassStringInArray(initialImport[0], initialImport[1]);
+			}
+		}
+
+		// === === === Class Functions === === === 
+		
+		// === === === Block Functions
+		//The Form String is the string that comes directly from the page HTML
+		//The Stat String is the string format that is needed to set a Stat Block class
+		function FormStringArrayToStatString(arrBlock, i = 0){ //ConLog("arrBlock("+i+"): "); ConLog(arrBlock);
+			const splitter = actionBlockInner;
+			let statType = arrBlock[i++];
+			let statText = arrBlock[i++];
+			let statSBID = arrBlock[i++]; 
+			let statWidth = arrBlock[i++]; 
+			let statBorder = arrBlock[i++];
+			let statFontSize = arrBlock[i++];
+			let statAlign = arrBlock[i++];
+			let statToggleable = arrBlock[i++];
+			let statString = statSBID +splitter+ statWidth +splitter+ statBorder +splitter+ statToggleable +splitter+ 
+							statType +splitter+ statFontSize +splitter+ statAlign +splitter+ statText;
+							
+			//ConLog("FormStringArrayToStatString, statString("+i+"): "+statString);
+			return statString;
+		}
+		//The SheetBlocksArray is the array format that is needed to set the Stat Blocks within the Sheet class
+		function FormStringArrayToSheetBlocksArray(arrBlocks, index = 0){
+			let arrFinal = [];
+			let arrInner = []; //temporary place holder of the block details
+			let finalGroup = null;
+			let countOpenP = 0;
+			let countCloseP = 0;
+			//ConLog("====================================================================================================================");
+			//ConLog("FormStringArrayToSheetBlocksArray, arrBlocks("+arrBlocks.length+"): "); ConLog(arrBlocks);
+			for(let i = index; i < arrBlocks.length; i++) {
+				let txt = arrBlocks[i]; //ConLog("arrBlocks["+i+"]: "+txt);
+				let isPushToInner = false;
+
+				if(txt == '(') {
+					//Check for open parenthesis
+					countOpenP++; 
+					if(countOpenP == 1){ 
+						let groupSbid = arrBlocks[++i];
+						let groupWidth = arrBlocks[++i];
+						let groupBorder = arrBlocks[++i];
+						let groupTogglable = arrBlocks[++i];
+						finalGroup = new Group(groupSbid +actionBlockInner+ groupWidth +actionBlockInner+ groupBorder +actionBlockInner+ groupTogglable); //ConLog("finalGroup: "); ConLog(finalGroup);
+					}else if(countOpenP > 1){ 
+						isPushToInner = true;
+					}
+
+				}else if(txt == ')') { 
+					//Check for closing parenthesis  
+					countCloseP++; 
+
+					if(countOpenP == countCloseP){ //ConLog("countOpenP: "+countOpenP+", countCloseP: "+countCloseP);
+						//If parenthesis has closed check if no other parenthesis inside
+
+						if(countOpenP == 1){//ConLog("countOpenP == 1, arrInner: "); ConLog(arrInner);
+							//If no nested parenthesis, assume all inside are Stat Block details
+							let indexStatStart = 0; 
+							while(arrInner[indexStatStart] == actionStat){
+								//Loop through Stat Block
+								let tempStat = new Stat(FormStringArrayToStatString(arrInner, (indexStatStart+1)));
+								indexStatStart += 1 + tempStat.colCount; //ConLog("arrInner["+indexStatStart+"]: "); ConLog(arrInner[indexStatStart]);
+								finalGroup.arrInnerBlocks.push(tempStat); //ConLog("arrInner, tempStat: "); ConLog(tempStat);
+							}
+
+						}else if(countOpenP > 1){ //ConLog("countOpenP > 1, arrInner: "); ConLog(arrInner);
+							//If has nested parenthesis, recursion
+							let recursion = FormStringArrayToSheetBlocksArray(arrInner); //ConLog("countOpenP > 1, recursion: "); ConLog(recursion);
+							for (let r = 0; r < recursion.length; r++) { //ConLog("recursion["+r+"]: "); ConLog(recursion[r]);
+								finalGroup.arrInnerBlocks.push(recursion[r]); //arrFinal.push(recursion[r]);
+							}
+						}
+						//ConLog("finalGroup: "); ConLog(finalGroup);
+						arrFinal.push(finalGroup); //ConLog("FormStringArrayToSheetBlocksArray group, "+txt+", arrFinal: "); ConLog(arrFinal);
+						finalGroup = null;
+						countOpenP = 0;
+						countCloseP = 0;
+						arrInner = [];
+						
+					}else if(countOpenP > 1){ 
+						isPushToInner = true;
+					} 
+
+				}else if(countOpenP > 0 || countOpenP != countCloseP){ 
+					isPushToInner = true;
+
+				}else if(txt == actionStat){
+					//Loop through Stat Block
+					let tempStat = new Stat(FormStringArrayToStatString(arrBlocks, (i+1))); //ConLog(i + " : " + tempStat.colCount);
+					i += tempStat.colCount; 
+					arrFinal.push(tempStat); //ConLog("FormStringArrayToSheetBlocksArray stat, "+txt+", arrFinal: "); ConLog(arrFinal);
+				} 
+				
+				if(isPushToInner){
+					//If in parenthesis then push to inner for future parsing
+					arrInner.push(txt);
+				}
+			}
+			//ConLog("FormStringArrayToSheetBlocksArray END, arrFinal: "); ConLog(arrFinal);
+			return arrFinal;
+		}
+		function FormStringToArray(stringForm){ //ConLog("FormStringToArray, stringForm: "+stringForm);
+			let formStringSplit = SplitTrim(stringForm, actionBlockInner); //ConLog("FormStringToArray, formStringSplit: "); ConLog(formStringSplit);
+			return FormStringArrayToSheetBlocksArray(formStringSplit, index = 0);
+		}
+		
+
+		// === === === Sheet Block / Group Class
+		const colCountSheetBlock = 4; //sbid, width, border, togglable
+		class SheetBlock {
+			constructor() {
+				this.colCount = colCountSheetBlock; 
+			}
+			ImportBlockString(blockSplit){  //ConLog("class SheetBlock blockSplit: ");ConLog(blockSplit);
+				let b = 0;
+				let temp = blockSplit[b++]; temp ??= ""; 
+				this.sbid = temp; /*SheetBlock ID*/		temp = blockSplit[b++]; temp ??= 0; 
+				this.width = temp; /*Width by %*/		temp = blockSplit[b++]; temp ??= 0; 
+				this.border = temp; /*solid or none*/	temp = blockSplit[b++]; temp ??= 0; 
+				this.togglable = temp; /*boolean*/		//temp = blockSplit[b++]; temp ??= 0; 
+			}
+			SheetBlockToString(splitter){
+				return this.sbid +splitter+ this.width +splitter+ this.border +splitter+ this.togglable;
+			}
+		}
+
+		// === === === Stat Class 
+		class Stat extends SheetBlock{
+			constructor(stringStat) {
+				super(); 
+				this.ImportStringToThis(stringStat);
+			}
+			ImportStringToThis(stringDetails){ 
+				let detailsSplit = SplitTrim(stringDetails, actionBlockInner); //ConLog("class Stat detailsSplit: "+stringDetails);ConLog(detailsSplit);
+				this.ImportBlockString(detailsSplit);
+				let d = this.colCount;
+				const ptsLimit = 100;
+				let temp = detailsSplit[this.colCount++]; temp ??= 0; 
+				this.type = temp; /*Static/Dynamic Num/Text*/		temp = detailsSplit[this.colCount++]; temp ??= 0; 
+				this.fontSize = temp; /*Font Size by rem*/			temp = detailsSplit[this.colCount++]; temp ??= 0; 
+				this.align = temp; /*left, center, right*/			temp = detailsSplit[this.colCount++]; temp ??= 0; 
+				this.text = temp; 									//temp = detailsSplit[this.colCount++]; temp ??= 0;
+			}
+			DetailsToString(splitter = actionBlockInner, override = false, isFormFormat = true){ //ConLog("isFormFormat: "+isFormFormat);
+				return isFormFormat ? actionStat +splitter+ this.type +splitter+ this.text +splitter+ this.sbid +splitter+ this.width +splitter+ this.border +splitter+ this.fontSize +splitter+ this.align +splitter+ this.togglable
+									: this.SheetBlockToString(splitter) +splitter+ this.type +splitter+ this.fontSize +splitter+ this.align +splitter+ this.text;
+			}
+			GetClassAction(isInner = false){
+				return isInner ? actionStatInner : actionStat;
+			}
+		}
+
+		// === === === Sheet Block / Group Class
+		class Group extends SheetBlock{
+			constructor(stringGroup) {
+				super(); 
+				this.ImportStringToThis(stringGroup);
+			}
+			ImportStringToThis(stringGroup){ 
+				let groupSplit = SplitTrim(stringGroup, actionBlockInner); //ConLog("class Group groupSplit: "+stringGroup);ConLog(groupSplit);
+				this.ImportBlockString(groupSplit);
+				let d = this.colCount;
+				for (let g = 0; g < this.colCount; g++) {
+					groupSplit.shift();
+				}//ConLog("groupSplit: "); ConLog(groupSplit);
+				this.arrInnerBlocks = groupSplit.length > 0 ? this.arrInnerBlocks = FormStringArrayToSheetBlocksArray(groupSplit) : [];
+			}
+			DetailsToString(splitter = actionBlockInner, override = false, isFormFormat = true){
+				let stringDetails = "(" +splitter+ this.SheetBlockToString(splitter) +splitter;
+				for (let g = 0; g < this.arrInnerBlocks.length; g++) {
+					stringDetails += g == 0 ? "" : splitter;
+					stringDetails += !override ? this.arrInnerBlocks[g].DetailsToString() : this.arrInnerBlocks[g].DetailsToString(splitter, override, isFormFormat);
+				}
+				return stringDetails +splitter+ ")";
+			}
+			GetClassAction(isInner = false){
+				return isInner ? actionGroupInner : actionGroup;
+			}
+		}
+		// === === === Sheet Class
+		class Sheet {
+			constructor(stringClass) {
+				this.detailsColCount = 3; //name, createdBy, description
+				this.ImportStringToThis(stringClass);
+			}
+			ImportStringToThis(stringClass){ 
+				let detailsSplit = SplitTrim(stringClass, actionCharSheetInner); //ConLog("class Sheet detailsSplit: ");ConLog(detailsSplit);
+				this.name = detailsSplit.shift();//name;
+				this.createdBy = detailsSplit.shift(); //created by
+				this.description = detailsSplit.shift(); //desc;
+				this.sbidCount = detailsSplit.shift(); //Sheet Block Count;
+				this.arrBlocks = FormStringToArray(detailsSplit[0]); //ConLog("this.arrBlocks: "); ConLog(this.arrBlocks);
+			}
+			ArrBlocksToString(splitter = actionBlockInner, override = false, isFormFormat = true){
+				let final = "";
+				for (let b = 0; b < this.arrBlocks.length; b++) {
+					final += b == 0 ? "" : splitter;
+					final += !override ? this.arrBlocks[b].DetailsToString() : this.arrBlocks[b].DetailsToString(splitter, override, isFormFormat);
+				}
+				return final;
+			}
+			DetailsToString(splitter = actionCharSheetInner, override = false, isFormFormat = true){
+				let stringDetails = this.name +splitter+ this.createdBy +splitter+ this.description +splitter+ this.sbidCount +splitter+ this.ArrBlocksToString(actionBlockInner, override, isFormFormat);
+				return stringDetails;
+			}
+			GetClassAction(isInner = false){
+				return isInner ? actionCharSheetInner : actionCharSheet;
+			}
+		}
+
+		
+		// === === === General Class Functions
+		//Since the Storage will be text based we need a quick way to convert from String to the Object Class
+		function StringToClass(action, string) { //ConLog("StringToClass Start: "+string);
+			if(action == actionCharSheet){
+				return new Sheet(string);
+			}else if(action == actionGroup){
+				return new Group(string);
+			}else if(action == actionStat){
+				return new Stat(string);
+			}
+		}
+		//Convert Class String to Class Array then add to Array
+		function InsertClassStringIntoArray(action, classString, isCopy = false){ //ConLog("InsertClassStringIntoArray (action "+action+")(isCopy, "+isCopy+") Start: "+classString);
+			let newClass = StringToClass(action, classString); //ConLog("InsertClassStringIntoArray, newClass: "); ConLog(newClass);
+			let arrForAppend = GetActionArray(action);
+			newClass.name = VerifyNameInArray(action, newClass.name);
+			newClass.createdBy = isCopy ? userDataName : newClass.createdBy;
+			if(arrForAppend != null) arrForAppend.push(newClass);
+			else alert("Error: InsertClassStringIntoArray["+action+"]"); 
+		}
+		//Update Array based on data in Storage
+		var arrSheetStorage = [];
+		function StorageStringToArray(storageItem, overrideString = "") {
+			let storageString = localStorage.getItem(storageItem); //ConLog("StorageStringToArray PRE, "+storageItem+": "+storageString);
+			storageString ??= overrideString; //ConLog("StorageStringToArray POST, "+storageItem+": "+storageString);
+			if(storageString){
+				let action = (storageItem == storageSheets ? actionCharSheet : null);
+				if(action == actionCharSheet) arrCharSheets = []; 
+				let storageStringSplit = SplitTrim(storageString, action); //ConLog("StorageStringToArray storageStringSplit, "+storageItem+": "+storageStringSplit);
+				for(let i=0; i<storageStringSplit.length;i++){
+					if(storageStringSplit[i] != null && storageStringSplit[i] != "") InsertClassStringIntoArray(action, storageStringSplit[i]); //ConLog("storageStringSplit["+i+"]: "); ConLog(storageStringSplit[i]);
+				}
+			}
+		}
+
+
+
+		//For Advanced Tool of block pointers
+		function GetBlockEditTextPreview(textPreview, sheetID){
+			//Check for Pointers
+			let arrApplyText = SplitTrim(textPreview, ''); //ConLog("arrApplyText: "+arrApplyText);
+			if(arrApplyText[0] == "=" && arrApplyText[1] == "="){
+				textPreview = "";
+				let isPointer = false;
+				let pointer = "";
+				for(let j = 0; j < arrApplyText.length; j++) {
+					isPointer = isPointer || arrApplyText[j] == "[";
+					if(isPointer){
+						if(arrApplyText[j] == "]"){
+							//Fetch the value of the block it is pointing to
+							let sbidTarget = pointer*1;
+							let arrTextEditBlocks = document.getElementsByClassName("text-edit"); 
+							for(let k = 0; k < arrTextEditBlocks.length; k++) {
+								let tempEditBlock = arrTextEditBlocks[k];
+								//ConLog("data-sheetID: "+tempEditBlock.getAttribute("data-sheetID")+" == "+sheetID);
+								//ConLog("data-sbid: "+tempEditBlock.getAttribute("data-sbid")+" == "+sbidTarget);
+								if(tempEditBlock.getAttribute("data-sheetID") == sheetID && tempEditBlock.getAttribute("data-sbid") == sbidTarget){
+									textPreview += tempEditBlock.value;
+								}
+							}
+							isPointer = false;
+							pointer = "";
+						}else if(arrApplyText[j] != "["){
+							pointer += arrApplyText[j]; 
+						}
+					}else{
+						textPreview += arrApplyText[j];
+					}
+				}
+				//ConLog("textPreview PRE: ");ConLog(textPreview);
+				textPreview = ParseRollDice(textPreview, true);
+				//ConLog("textPreview POST: ");ConLog(textPreview);
+			}
+			return textPreview;
+		}
+		function GetBlockDivID(element){
+			let sheetID = element.getAttribute("data-sheetID");
+			let blockType = "block"; //element.getAttribute("data-blockType");
+			let blockTypeID = (blockType == "block" ? "b" 
+							: (blockType == "group" ? "g" 
+							: (blockType == "stat" ? "s" 
+							: null)));
+			let blockID = element.getAttribute("data-blockID");
+			return "s"+sheetID+blockTypeID+blockID;
+		}
+		//Update the value in a Block
+		function UpdateSheetBlock(blockDiv){
+			let sheetID = blockDiv.getAttribute("data-sheetID"); 
+			let blockType = blockDiv.getAttribute("data-blockType"); 
+			let blockDivID = GetBlockDivID(blockDiv); 
+
+			if(blockType == "0" || blockType == "2"){ 
+				//If Static Block, then apply the Placeholder value
+				document.getElementById(blockDivID+"TextEdit").value = document.getElementById(blockDivID+"TextPlaceholder").value;
+				let applyText = document.getElementById(blockDivID+"TextEdit").value; //ConLog("applyText: "+applyText);
+				document.getElementById(blockDivID+"Start").innerHTML = GetBlockEditTextPreview(applyText, sheetID);
+
+			}else if(blockType == "1" || blockType == "3"){ 
+				//If Dynamic Block, then apply alignment to the input form
+				let applyAlign = document.getElementById(blockDivID+"AlignEdit").value;
+				document.getElementById(blockDivID+"TextEdit").style.textAlign = applyAlign;
+			}
+		}
+		function DupePrefixCheck(stringReSaveTemp){
+			//Ensure stringReSaveTemp is returned prefixed with actionBlockInner
+			return (stringReSaveTemp[0]+stringReSaveTemp[1]+stringReSaveTemp[2]) == actionBlockInner 
+				? stringReSaveTemp 
+				: actionBlockInner+stringReSaveTemp;
+		}
+		//"Save Sheet" button functionality
+		function SetOnClickSheetSave(saveType = null, thisBtn = null){ 
+			//Set the Sheet Details
+			let sheetID = currentTab; //btnSheetSave.getAttribute("data-sheetID"); 
+			let newSheetSbidCount = document.getElementById("sheet"+sheetID+"SbidCount").value; 
+			let newSheetName = document.getElementById("sheet"+sheetID+"Title").value;
+			let newSheetCreatedBy = document.getElementById("sheet"+sheetID+"CreatedBy").value;
+			let newSheetDesc = document.getElementById("sheet"+sheetID+"Description").value;
+			document.getElementById("sheet"+sheetID+"TitleDisplay").innerHTML = newSheetName;
+			document.getElementById("sheet"+sheetID+"CreatedByDisplay").innerHTML = newSheetCreatedBy; 
+			document.getElementById("sheet"+sheetID+"DescriptionDisplay").innerHTML = newSheetDesc;
+			document.getElementById("tab"+sheetID).innerHTML = newSheetName;
+			if(!isValidX5(newSheetCreatedBy)) newSheetCreatedBy = userDataName;
+
+			//Variables for Re-Save / Advanced Tools 
+			let targetSaveBlockDivID = saveType == null ? null : GetBlockDivID(thisBtn);
+			let targetSaveBlockType = saveType == null ? null : thisBtn.getAttribute("data-blockType"); //ConLog("targetSaveBlockType: "+targetSaveBlockType);
+			let targetSaveBlockID = saveType == null ? null : thisBtn.getAttribute("data-blockID");
+
+			let stringSaveFinal = "";
+			let stringSavePrefix = newSheetName+actionCharSheetInner+newSheetCreatedBy+actionCharSheetInner+newSheetDesc+actionCharSheetInner;
+
+			//Sheet Variabes
+			let isStartOfArrFinal = true;
+			let isSaveTypeDupe = saveType == 0;
+			let isSaveTypeMoveThruGroup = saveType == 3 || saveType == 4; //Left = 3, Right = 4
+			let isSaveTypeMove = saveType == 1 || saveType == 2 || isSaveTypeMoveThruGroup; //Left = 1, Right = 2
+			let sbidMax = 0; 
+
+			//Sheet Block Variabes
+			let exportPartition = ""; //used to store each relevant part of the export
+			let exportBlockClass = null; //Group or Stat
+			let isExportPartitionEndGroup = false;
+			let isExportBlockTheTargetBlock = false;
+
+			//Re-save/Advanced tool variabes
+			let stringReSaveTemp = ""; 
+			let isStringForDupe = false;
+			let isStringForMove = false;
+			let isStringSaveForAppend = false;
+			let arrExportPartitionIds = [];
+			let prevBlockID = 0;
+			let sbidPartitionIndex = 0; //For finding position of sbid
+			let sbidForMove = 0; //For finding the index to place stringReSaveTemp 
+			let blockTypeForMove = 0; //blockTypeForMove: G = Group, 0 = Static Num, 1 = Dynamic Num, 2 = Static Text, 3 = Dynamic Text
+
+			let arrFinal = [];
+			let arrStats = document.getElementsByClassName("sheet-export"); //ConLog("SetOnClickSheetSave, arrStats"); ConLog(arrStats);
+			for(let s = 0; s < arrStats.length; s++) {
+				//Make sure that only the current Sheet is being considered
+				let exportSheetID = arrStats[s].getAttribute("data-sheetID"); 
+				if(exportSheetID == sheetID){
+					let dataExport = arrStats[s].getAttribute("data-export"); 
+					let exportBlockID = arrStats[s].getAttribute("data-blockID"); 
+					if(dataExport != "BLOCKEND"){
+						let isGroupStart = dataExport == "(";
+						let isGroupEnd = dataExport == ")";
+						let isStatStart = dataExport == actionStat;
+						let isStartOfBlock = (isGroupStart || isStatStart);
+						let isStartOfPartition = isStartOfBlock || isGroupEnd; //ConLog("isStartOfPartition: "+isStartOfPartition);
+						let isBlockTargetSave = arrStats[s].id == targetSaveBlockDivID;
+						if(isGroupEnd) isExportPartitionEndGroup = true;
+
+						if(isStartOfPartition){
+							//Add previous partition to the final result when a new partition starts
+							if(!isStartOfArrFinal){
+								arrFinal.push(exportPartition); 
+								arrExportPartitionIds.push(prevBlockID); //ConLog("exportPartition: "+exportPartition); ConLog(arrFinal); ConLog(arrExportPartitionIds);
+								exportPartition = "";
+							}else{
+								isStartOfArrFinal = false; //Skip first partition since there is no previous Block to push into arrFinal
+							}
+
+							//Set current BlockID as prev for next block
+							prevBlockID = exportBlockID; //ConLog("isStartOfBlock, exportBlockClass & prevBlockID: "+prevBlockID);
+
+							//update exportBlockClass only if start of block
+							if(isStartOfBlock) exportBlockClass = isGroupStart ? actionGroup : actionStat;
+						} 
+						
+						let editType = arrStats[s].getAttribute("data-editType");
+						let tempValue = dataExport == "val" 
+										? (editType == "text" 
+											? document.getElementById(GetBlockDivID(arrStats[s])+"TextPlaceholder").value 
+											: arrStats[s].value) 
+										: dataExport;
+						if(tempValue == null || tempValue == ""){ //set default vals
+							tempValue = (editType == "fontSize" ? 1 
+									: (editType == "align" ? "left" 
+									: "0"));
+						}
+
+						isStringForDupe = isSaveTypeDupe && (isStringForDupe || (isStartOfBlock && isBlockTargetSave));
+						isStringForMove = isSaveTypeMove && (isStringForMove || (isStartOfBlock && isBlockTargetSave)); //ConLog("isStringForDupe: "+isStringForDupe+", isStringForMove: "+isStringForMove);
+						if(!isStringForMove){ //ConLog("isStringSaveForAppend: "+isStringSaveForAppend); 
+							if(isSaveTypeDupe && isStringSaveForAppend){
+								//If end of duplicate block, push to arrFinal
+								stringReSaveTemp = DupePrefixCheck(stringReSaveTemp);
+								arrFinal.push(stringReSaveTemp);
+								arrExportPartitionIds.push("Dupe"); //ConLog("Dupe, stringReSaveTemp: "+stringReSaveTemp); ConLog(arrFinal); //ConLog(arrExportPartitionIds);
+								stringReSaveTemp == "";
+								isStringSaveForAppend = false;
+							}
+							exportPartition += s == 0 ? "" : actionBlockInner;
+							exportPartition += tempValue; 
+						}
+						
+						if(isStringForDupe || isStringForMove){
+							//If string is for dupicate or move and if start of block, then determine position of sbid to update it
+							sbidPartitionIndex = isStartOfBlock ? 0 : sbidPartitionIndex+1;
+							if((exportBlockClass == actionGroup && sbidPartitionIndex == 1) 
+								||(exportBlockClass == actionStat && sbidPartitionIndex == 3) ){
+								tempValue = newSheetSbidCount++;
+								sbidMax = Math.max(sbidMax, tempValue); //ConLog("sbidMax = Math.max( "+sbidMax+", "+tempValue);
+							}
+
+							//Save the duplicate or move string
+							stringReSaveTemp += s == 0 ? "" : actionBlockInner;
+							stringReSaveTemp += tempValue; 
+						}
+
+					}else{
+						//if BLOCKEND then do...
+
+						let isEndOfExportBlock = exportBlockClass == actionStat || (exportBlockClass == actionGroup && isExportPartitionEndGroup);
+						if(isEndOfExportBlock){
+							isExportPartitionEndGroup = false;
+
+							//If current Block is the end of the target Block then remember the ForMove details
+							if(exportBlockID == targetSaveBlockID){
+								sbidForMove = exportBlockID; //ConLog("sbidForMove: "+sbidForMove);
+								blockTypeForMove = arrStats[s].getAttribute("data-blockType"); 
+								isStringSaveForAppend = true;
+								isStringForDupe = false;
+								isStringForMove = false;
+							}
+						}
+
+						//Apply Block
+						UpdateSheetBlock(arrStats[s]);
+					}
+				}
+			}
+
+			//Append final partition/s
+			arrFinal.push(exportPartition); //ConLog("exportPartition: "+exportPartition);
+			arrExportPartitionIds.push(prevBlockID); //ConLog("PRE-END arrFinal: "); ConLog(arrFinal); ConLog(arrExportPartitionIds);
+			
+			//Insert For Move Partition if any
+			if(isStringSaveForAppend && isValidX5(stringReSaveTemp)){ //ConLog("Move?("+saveType+"), Target("+sbidForMove+") : ");
+				if(isSaveTypeDupe){
+					stringReSaveTemp = DupePrefixCheck(stringReSaveTemp); //ConLog("stringReSaveTemp, dupe, end: "+stringReSaveTemp);
+					arrFinal.push(actionBlockInner+stringReSaveTemp);
+				}else if(isSaveTypeMove){
+					let isSaveLeft = saveType == 1 || saveType == 3;
+					let indexOfMoveTarget = arrExportPartitionIds.indexOf(sbidForMove); 
+					let indexOfMoveTargetEnd = blockTypeForMove == "G" ? arrExportPartitionIds.lastIndexOf(sbidForMove) : indexOfMoveTarget; 
+					let indexOfNewPlacementFinal = isSaveLeft ? indexOfMoveTarget-1 : indexOfMoveTargetEnd+1; //ConLog("indexOfNewPlacementFinal PRE: "+indexOfNewPlacementFinal);
+					if(isSaveTypeMoveThruGroup){ 
+						//Find groups last index if New Placement id is group
+						let indexOfNewPlacementTemp = indexOfNewPlacementFinal;
+						let sbidOfNewPlacement = arrExportPartitionIds[indexOfNewPlacementTemp]; //ConLog("sbidOfNewPlacement: "+sbidOfNewPlacement);
+						indexOfNewPlacementFinal = isSaveLeft 
+													? arrExportPartitionIds.indexOf(sbidOfNewPlacement)
+													: arrExportPartitionIds.lastIndexOf(sbidOfNewPlacement)+1; 
+					}else if(saveType == 2){
+						//if Move right one step no need to find groups last index
+						indexOfNewPlacementFinal++;
+					}
+					let stringSaveSplice = indexOfNewPlacementFinal	== 0 ? stringReSaveTemp+actionBlockInner : DupePrefixCheck(stringReSaveTemp); //ConLog("indexOfNewPlacementFinal POST: "+indexOfNewPlacementFinal);
+					arrFinal.splice(indexOfNewPlacementFinal, 0, stringSaveSplice);
+					//ConLog("Post Move arrFinal, after splicing stringSaveSplice: "+stringSaveSplice); ConLog(arrFinal); 
+				}
+			}
+			//ConLog("arrFinal: "); ConLog(arrFinal); ConLog(arrExportPartitionIds);
+			//ConLog("===END=================================");
+
+			newSheetSbidCount = sbidMax + 1;
+			stringSaveFinal = stringSavePrefix + newSheetSbidCount + actionCharSheetInner + arrFinal.join("");
+			exportPartition = "";
+			
+			UpdateClassStringInArray(actionCharSheet, stringSaveFinal, isSaveTypeDupe); //ConLog("stringSaveFinal: "); ConLog(stringSaveFinal);
+			//ConLog("Post Save Char Sheets: "); ConLog(ArrayToString(actionCharSheet));
+		}
+		//"Edit Sheet" button functionality
+		function SetOnClickSheetEdit(btnSheetEdit){
+			let sheetID = btnSheetEdit.getAttribute("data-sheetID"); 
+			let btnPreText = "Toggle Sheet Block Edit: ";
+			btnSheetEdit.innerHTML = btnSheetEdit.innerHTML == btnPreText+"OFF" ? btnPreText+"ON" : btnPreText+"OFF";
+			if(btnSheetEdit.innerHTML == btnPreText+"OFF"){
+				DisplayByClass("btn-block-edit-top-btns", "none", sheetID);
+				DisplayByClass("form-new-block", "none", sheetID);
+
+				//Reset edit form when switching Toggle Off
+				InnerHTMLByClass("btn-block-edit", "Edit", sheetID);
+				DisplayByClass("btn-block-remove", "none", sheetID);
+				DisplayByClass("div-block-edit", "none", sheetID);
+
+				//Display Body when switching Toggle On
+				DisplayByClass("div-block-body", "block", sheetID);
+
+				//Set Border none to dashed for better visual orientation
+				BorderByClass("sheet-container", "none", sheetID, "dashed");
+
+			}else{
+				DisplayByClass("btn-block-edit-top-btns", "block", sheetID);
+				DisplayByClass("form-new-block", "block", sheetID);
+				
+				BorderByClass("sheet-container", "dashed", sheetID, "none");
+			}
+		}
+		function SetSheetButtons(){
+			let arrSheetEdit = document.getElementsByClassName("btn-sheet-edit");
+			for(let i = 0; i < arrSheetEdit.length; i++) {
+				arrSheetEdit[i].onclick = function() {
+					SetOnClickSheetEdit(this);
+				}
+			}
+			let arrSheetSave = document.getElementsByClassName("btn-sheet-save");
+			for(let i = 0; i < arrSheetSave.length; i++) {
+				arrSheetSave[i].onclick = function() {
+					SetOnClickSheetSave();
+				}
+			}
+		}
+
+		//Create New Form
+		function CreateNewForm(formNewID, sheetID){
+			let htmlSelect =	"<div id=\""+formNewID+"NewDiv\" class=\"form-new-block sheet-block w100\" data-sheetID=\""+sheetID+"\">"
+						+"			<div id=\""+formNewID+"NewToggle\"  class=\"btn btn-block-new-form togglable-block\" data-target=\""+formNewID+"NewForm\">+</div>"
+						+"			<div id=\""+formNewID+"NewForm\" class=\"border\" style=\"display: none;\">"
+						+"				<select id=\""+formNewID+"New\" title=\"Select Block Type\" class=\"form-control\">"
+						+"					<option value=\"\" selected disabled>Select Block Type: </option>"
+						+"					<option value=\"0\">Static Number </option>"
+						+"					<option value=\"1\">Dynamic Number </option>"
+						+"					<option value=\"2\">Static Text </option>"
+						+"					<option value=\"3\">Dynamic Text </option>"
+						+"					<option value=\"G\">Group </option>"
+						+"				</select> "
+						+"				<div id=\""+formNewID+"NewBtn\" class=\"btn btn-block-new\" data-sheetID=\""+sheetID+"\" data-target=\""+formNewID+"\">Create New Block</div>"
+						+"			</div>"
+						+"		</div>"
+			return htmlSelect;
+		}
+		function GetSheetBody(sheetId){
+			let idNewSheet = "sheet"+sheetId;
+			return "<div id=\""+idNewSheet+"Body\" class=\"sheet-block\" style=\"width: 100%; padding-bottom: 3rem;\">"
+				+"		<h1 id=\""+idNewSheet+"TitleDisplay\"></h1>"
+				+"		<h5 style=\"margin: 0;\">By: <span id=\""+idNewSheet+"CreatedByDisplay\"></span></h5>"
+				+"		<p id=\""+idNewSheet+"DescriptionDisplay\" class=\"lead\"></p>"
+				+"		<hr>"
+				+"		<!-- Sheet Start -->"
+						+CreateNewForm(""+idNewSheet+"BodyStart", sheetId)
+				+"		<div id=\""+idNewSheet+"BodyStart\"></div>"
+				+"	</div>";
+		}
+		function LoadSheetBlocks(sheetId, sheetOpened){
+			let idNewSheet = "sheet"+sheetId;
+
+			//Reset Sheet Blocks before remaking
+			document.getElementById(idNewSheet+"Body").outerHTML = GetSheetBody(sheetId);
+			
+			//Set all the buttons after initial Sheet body
+			SetSheetButtons();
+			SetTogglables();
+			SetBlockEditButtons();
+
+			//Set the opened Sheet's details
+			document.getElementById("tab"+sheetId).innerHTML = sheetOpened.name;
+			document.getElementById(idNewSheet+"Title").value = sheetOpened.name;
+			document.getElementById(idNewSheet+"TitleDisplay").innerHTML = sheetOpened.name;
+			document.getElementById(idNewSheet+"CreatedBy").value = sheetOpened.createdBy; 
+			document.getElementById(idNewSheet+"CreatedByDisplay").innerHTML = sheetOpened.createdBy; 
+			document.getElementById(idNewSheet+"Description").value = sheetOpened.description;
+			document.getElementById(idNewSheet+"DescriptionDisplay").innerHTML = sheetOpened.description;
+			//ConLog("Opened sheet blocks: "+sheetOpened.ArrBlocksToString());
+
+			//Loop through the Sheet's Blocks
+			let prevBlockType = "";
+			let sbidMax = 0; 
+			let divIDNewToggle = idNewSheet+"BodyStartNewToggle";
+			let divIDNew = idNewSheet+"BodyStartNew";
+			let divIDNewBtn = idNewSheet+"BodyStartNewBtn";
+			let arrDivIdStartNewToggle = [];
+			let arrDivIdStartNew = [];
+			let arrDivIdStartNewBtn = [];
+			let arrSheetBlocks = SplitTrim(sheetOpened.ArrBlocksToString(), actionBlockInner); //ConLog("arrSheetBlocks: "); ConLog(arrSheetBlocks);
+			for (let b = 0; b < arrSheetBlocks.length; b++) {
+				let currBlock = arrSheetBlocks[b]; //ConLog("b start: "+b+", currBlock: "+currBlock);
+				let blockType = (currBlock == "(" ? "G" 
+							: (currBlock == actionStat ? arrSheetBlocks[++b] 
+							: null));
+				if(blockType != null){
+					//Set Sheet Block's details
+					prevBlockType = blockType;
+					text = currBlock == actionStat ? arrSheetBlocks[++b] : null;
+					sbid = arrSheetBlocks[++b];
+					width = arrSheetBlocks[++b];
+					border = arrSheetBlocks[++b];
+					fontSize = currBlock == actionStat ? arrSheetBlocks[++b] : null;
+					align = currBlock == actionStat ? arrSheetBlocks[++b] : null;
+					togglable = arrSheetBlocks[++b];
+					sbidMax = Math.max(sbidMax, sbid);
+					//ConLog(currBlock+" ["+b+"] : "+blockType+", "+text+", "+width+", "+border+", "+fontSize+", "+align+", "+togglable);
+					
+					//Create new Block and update it's details
+					let blockDivId = "s"+sheetId+"b"+(currentBlockID); //1. Set the current block's div ID
+					document.getElementById(divIDNewToggle).click(); //2. Toggle "+" 
+					document.getElementById(divIDNew).value = blockType; //3. Select blockType
+					document.getElementById(divIDNewBtn).click(); //4. Create New Block, will update currentBlockID
+					//ConLog("Create new ("+blockType+"), put in blockDivId: "+blockDivId);
+					document.getElementById(blockDivId+"SbidEdit").value = sbid;
+					document.getElementById(blockDivId+"SbidEdit").defaultValue = sbid;
+					document.getElementById(blockDivId+"WidthEdit").value = width;
+					document.getElementById(blockDivId+"BorderEdit").value = border;
+					document.getElementById(blockDivId+"TogglableEdit").value = togglable;
+					if(blockType != "G"){
+						//if Stat, then set the details
+						if(blockType == "0" || blockType == "2") //If Static Stat, then update placeholder as well
+							document.getElementById(blockDivId+"TextPlaceholder").value = text;
+						document.getElementById(blockDivId+"TextEdit").value = text;
+						document.getElementById(blockDivId+"TextEdit").dataset.sbid = sbid; //Update sbid in TextEdit
+						document.getElementById(blockDivId+"FontSizeEdit").value = fontSize;
+						document.getElementById(blockDivId+"AlignEdit").value = align;
+						
+						//Set the next div ID
+						divIDNewToggle = blockDivId+"EndNewToggle";
+						divIDNew = blockDivId+"EndNew";
+						divIDNewBtn = blockDivId+"EndNewBtn";
+					}else{
+						//If block type is group, then save the end div ID to an array and use "StartNew" as current div ID
+						arrDivIdStartNewToggle.push(blockDivId+"EndNewToggle");
+						arrDivIdStartNew.push(blockDivId+"EndNew");
+						arrDivIdStartNewBtn.push(blockDivId+"EndNewBtn");
+						divIDNewToggle = blockDivId+"StartNewToggle";
+						divIDNew = blockDivId+"StartNew";
+						divIDNewBtn = blockDivId+"StartNewBtn";
+					}
+
+					//Apply changes
+					document.getElementById(blockDivId+"Edit").click(); //ConLog("Clicked "+blockDivId+"Edit");
+					document.getElementById(blockDivId+"Apply").click(); //ConLog("Clicked "+blockDivId+"Apply");
+
+				}else if(currBlock == ")"){ 
+					//If end of group, then use to most recently added new divID
+					prevBlockType = currBlock;
+					divIDNewToggle = arrDivIdStartNewToggle.pop(); 
+					divIDNew = arrDivIdStartNew.pop();
+					divIDNewBtn = arrDivIdStartNewBtn.pop();
+					//ConLog("ending (, currBlock: "+currBlock+", divIDNewToggle: "+divIDNewToggle+", divIDNew: "+divIDNew+", divIDNewBtn: "+divIDNewBtn);
+
+				}else if(!(currBlock == "" && prevBlockType == "G")){
+					ConLog("[Error] Opening Sheet, Invalid block format ("+currBlock+")");//ConLog("ERR");//
+				}
+			}
+
+			//Set Sheet's max sbid
+			document.getElementById(idNewSheet+"SbidCount").value = sbidMax + 1; 
+
+			//Set all the buttons after loading Sheet blocks
+			SetSheetButtons();
+			SetTogglables();
+			SetBlockEditButtons();
+		}
+		
+		//Tab Set up
+		function SetTab(tab){
+			tab.onclick = function() {
+				DisplayByClass("sheet", "none");
+				let sheetID = this.getAttribute("data-sheetID");
+				currentTab = sheetID;
+				DisplayById("sheet"+sheetID, "block");
+
+				RemoveClassByClass("tab", "tab-active");
+				this.classList.add("tab-active");
+
+				//Quick Controls
+				if(currentTab == 0){
+					DisplayById("btnTabEditSheet", "none");
+					DisplayById("btnTabSaveSheet", "none");
+					DisplayById("btnTabClose", "none");
+				}else{
+					DisplayById("btnTabEditSheet", "inline-block");
+					DisplayById("btnTabSaveSheet", "inline-block");
+					DisplayById("btnTabClose", "inline-block");
+				}
+				if(currentTabOpenCount > 0){
+					DisplayById("btnTabCloseAll", "inline-block");
+				}else{
+					DisplayById("btnTabCloseAll", "none");
+				}
+			}
+		}
+		function OpenTab(sheetOpened = null){ //ConLog("OpenTab, sheetOpened: "+sheetOpened); ConLog(sheetOpened);
+			sheetIdCount++;
+			currentTabOpenCount++;
+
+			//Set up the tab itself
+			let idNewTab = "tab"+sheetIdCount;
+			let txtNew = "<div id=\""+idNewTab+"\" class=\"tab\" data-sheetID=\""+sheetIdCount+"\">Sheet "+sheetIdCount+"</div>"
+						+"<div id=\"endTabs\"></div>";
+			document.getElementById("endTabs").outerHTML = txtNew;
+			SetTab(document.getElementById(idNewTab));
+
+			//Set up the Sheet 
+			let idNewSheet = "sheet"+sheetIdCount;
+			txtNew = 
+				"<div id=\""+idNewSheet+"\" class=\"sheet\" style=\"display: none;\">"
+				+"	<div id=\""+idNewSheet+"EditBtns\" class=\"border is-active\">"
+				
+				+"		<label for=\""+idNewSheet+"Title\""
+				+"			title=\"Sheet Title/Name\"> <strong>Sheet Title/Name:</strong> This will also be the sheet's tab display."
+				+"		</label>"
+				+"		<input id=\""+idNewSheet+"Title\" class=\"form-control\" placeholder=\"Enter Title/Name. This will also be the sheet's tab display.\"/>"
+				
+				+"		<label for=\""+idNewSheet+"CreatedBy\""
+				+"			title=\"Sheet Created By\"> <strong>Sheet Created By:</strong> This user created this Sheet."
+				+"		</label>"
+				+"		<input id=\""+idNewSheet+"CreatedBy\" class=\"form-control\" placeholder=\"Enter Created By. This user created this Sheet.\"/>"
+				
+				+"		<label for=\""+idNewSheet+"Description\""
+				+"			title=\"Sheet Description\"> <strong>Sheet Description:</strong> Something about the contents of this sheet."
+				+"		</label>"
+				+"		<textarea id=\""+idNewSheet+"Description\" class=\"form-control\" title=\"Sheet Description\" placeholder=\"Sheet Description. Something about the contents of this sheet.\" ></textarea>"
+				
+				+"		<label for=\""+idNewSheet+"SbidCount\""
+				+"			title=\"Sheet Current ID\"> <strong>Sheet Current ID:</strong> The next id that will be given to a created block."
+				+"		</label>"
+				
+				+"		<input id=\""+idNewSheet+"SbidCount\" class=\"form-control\" type=\"number\" value=\"1\"/>"
+				+"		<div id=\""+idNewSheet+"EditBlocks\" class=\"btn btn-sheet-edit\" data-sheetID=\""+sheetIdCount+"\" hidden>Toggle Sheet Block Edit: ON</div>"
+				//+"		<div class=\"btn btn-sheet-save\" data-sheetID=\""+sheetIdCount+"\">Save Sheet</div>"
+				+"	</div>"
+				+	GetSheetBody(sheetIdCount)
+				+"</div>"
+				+"<div id=\"endSheets\"></div>";
+			document.getElementById("endSheets").outerHTML = txtNew;
+
+			//Set all the buttons after loading initial Sheet
+			SetSheetButtons();
+			SetTogglables();
+			SetBlockEditButtons();
+				
+			if(sheetOpened != null){
+				//If opening existing sheet, then load the Sheet's Blocks
+				LoadSheetBlocks(sheetIdCount, sheetOpened);
+			}else{
+				//if new sheet, then set up default values
+				document.getElementById(idNewSheet+"CreatedBy").value = userDataName;
+			}
+
+			//Click the Tab to load it, Edit if opening sheet for first time
+			document.getElementById(idNewTab).click();
+			if(sheetOpened != null){
+				document.getElementById("btnTabEditSheet").click(); 
+			}
+		}
+		function DisplayExportString(sheetName){
+			let sheetForExport = FindInActionArray(actionCharSheet, sheetName);
+			document.getElementById("importClassString").value = sheetForExport.DetailsToString();
+			let ioDisplay = document.getElementById("tblSheetsImport");
+			if(ioDisplay.innerHTML != "Import/Export") ioDisplay.click();
+		}
+		function GetSheetNameFromTable(sheetRow){
+			let sheetID = sheetRow.getAttribute("data-sheetID"); 
+			return document.getElementById("tblSheetName"+sheetID).innerHTML; 
+		}
+		function SetSheetTableButtons(){
+			let arrSheetOpen = document.getElementsByClassName("btn-sheet-open");
+			for(let i = 0; i < arrSheetOpen.length; i++) {
+				arrSheetOpen[i].onclick = function() {
+					//Get the Sheet Class object
+					let sheetName = GetSheetNameFromTable(this); 
+					let sheetToOpen = FindInActionArray(actionCharSheet, sheetName); 
+					let arrOpenedSheets = document.getElementsByClassName("tab");
+
+					//If Sheet is already opened, then do not open in new tab
+					let isNewTab = true;
+					for(let i = 0; i < arrOpenedSheets.length; i++) {
+						if(arrOpenedSheets[i].innerHTML == sheetName){
+							arrOpenedSheets[i].click();
+							isNewTab = false;
+						}
+					}
+					if(isNewTab) OpenTab(sheetToOpen);
+				}
+			}
+			let arrSheetEdit = document.getElementsByClassName("btn-sheet-delete");
+			for(let i = 0; i < arrSheetEdit.length; i++) {
+				arrSheetEdit[i].onclick = function() {
+					let indexForDelete = FindInActionArray(actionCharSheet, GetSheetNameFromTable(this), true);
+					DeleteFromArray(actionCharSheet, indexForDelete);
+				}
+			}
+			let arrSheetSave = document.getElementsByClassName("btn-sheet-export");
+			for(let i = 0; i < arrSheetSave.length; i++) {
+				arrSheetSave[i].onclick = function() { 
+					DisplayExportString(GetSheetNameFromTable(this));
+				}
+			}
+		}
+
+		//Create Select Block Edit
+		function CreateSelectBlockEdit(sheetID, newBlockID, type){
+			let hidden = type == "Togglable" ? " hidden" : "";
+			let htmlSelect = "<select id=\""+newBlockID+type+"Edit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" title=\"Block "+type+"\""+hidden+"> ";
+			htmlSelect += (type == "Width" ?	
+									"<option value=\"fit-content\">Fit Width to Contents</option>"
+									+"<option value=\"100%\" selected>Full Width: 100%</option>"
+									+"<option value=\"50%\">1/2 Width: 50%</option>"
+									+"<option value=\"33.33%\">1/3 Width: 33.33%</option>"
+									+"<option value=\"25%\">1/4 Width: 25%</option>"
+									+"<option value=\"20%\">1/5 Width: 20%</option>"
+									+"<option value=\"16.66%\">1/6 Width: 16.66%</option>"
+									+"<option value=\"14.18%\">1/7 Width: 14.18%</option>"
+									+"<option value=\"12.5%\">1/8 Width: 12.5%</option>"
+									+"<option value=\"11.11%\">1/9 Width: 11.11%</option>"
+									+"<option value=\"10%\">1/10 Width: 10%</option>"
+									+"<option value=\"9.09%\">1/11 Width: 9.09%</option>"
+									+"<option value=\"8.33%\">1/12 Width: 8.33%</option>"
+									+"<option value=\"66.66%\">2/3 Width: 66.66%</option>"
+									+"<option value=\"40%\">2/5 Width: 40%</option>"
+									+"<option value=\"28.57%\">2/7 Width: 28.57%</option>"
+									+"<option value=\"22.22%\">2/9 Width: 22.22%</option>"
+									+"<option value=\"18.18%\">2/11 Width: 18.18%</option>"
+									+"<option value=\"75%\">3/4 Width: 75%</option>"
+									+"<option value=\"60%\">3/5 Width: 60%</option>"
+									+"<option value=\"42.85%\">3/7 Width: 42.85%</option>"
+									+"<option value=\"37.5%\">3/8 Width: 37.5%</option>"
+									+"<option value=\"30%\">3/10 Width: 30%</option>"
+									+"<option value=\"27.27%\">3/11 Width: 27.27%</option>"
+									+"<option value=\"80%\">4/5 Width: 80%</option>"
+									+"<option value=\"57.14%\">4/7 Width: 57.14%</option>"
+									+"<option value=\"44%\">4/9 Width: 44%</option>"
+									+"<option value=\"36.36%\">4/11 Width: 36.36%</option>"
+									+"<option value=\"83.33%\">5/6 Width: 83.33%</option>"
+									+"<option value=\"71.42%\">5/7 Width: 71.42%</option>"
+									+"<option value=\"62.5%\">5/8 Width: 62.5%</option>"
+									+"<option value=\"55.55%\">5/9 Width: 55.55%</option>"
+									+"<option value=\"45.45%\">5/11 Width: 45.45%</option>"
+									+"<option value=\"41.66%\">5/12 Width: 41.66%</option>"
+									+"<option value=\"85.71%\">6/7 Width: 85.71%</option>"
+									+"<option value=\"54.54%\">6/11 Width: 54.54%</option>"
+									+"<option value=\"87.5%\">7/8 Width: 87.5%</option>"
+									+"<option value=\"77.77%\">7/9 Width: 77.77%</option>"
+									+"<option value=\"70%\">7/10 Width: 70%</option>"
+									+"<option value=\"63.63%\">7/11 Width: 63.63%</option>"
+									+"<option value=\"58.33%\">7/12 Width: 58.33%</option>"
+									+"<option value=\"88.88%\">8/9 Width: 88.88%</option>"
+									+"<option value=\"72.72%\">8/11 Width: 72.72%</option>"
+									+"<option value=\"90%\">9/10 Width: 90%</option>"
+									+"<option value=\"81.81%\">9/11 Width: 81.81%</option>"
+									+"<option value=\"90.9%\">10/11 Width: 90.9%</option>"
+									+"<option value=\"91.66%\">11/12 Width: 91.66</option>"
+						: (type == "Border" ?	
+									"<option value=\"none\" selected>No Border</option>"
+									+"<option value=\"solid\">Solid Border</option>"
+						: (type == "Togglable" ?	
+									"<option value=\"0\" selected>Always Visible</option>"
+									+"<option value=\"1\">Visible and Togglable</option>"
+									+"<option value=\"2\">Hidden and Togglable</option>"
+						: (type == "Align" ?	
+									"<option value=\"left\" selected>Left Align</option>"
+									+"<option value=\"center\">Center Align</option>"
+									+"<option value=\"right\">Right Align</option>"
+						: "Err"))));
+			htmlSelect += 	"</select> ";
+			return htmlSelect;
+		}
+
+		//Create New Block
+		function CreateNewBlock(newBlock, overrideTarget = null, overrideSheetID = null, overrideBlockType = null){
+			let target = overrideTarget == null ? newBlock.getAttribute("data-target") : overrideTarget;
+			let sheetID = overrideSheetID == null ? newBlock.getAttribute("data-sheetID") : overrideSheetID;
+			let blockType = overrideBlockType == null ? document.getElementById(target+"New").value : overrideBlockType; 
+			//ConLog("target: "+target+", sheetID: "+sheetID+", blockType: "+blockType);
+			if(blockType != null && blockType != ""){ 
+				//Set Sheet Block ID Count
+				let sheetBlockIDEditInput = document.getElementById("sheet"+sheetID+"SbidCount");
+				let sbid = sheetBlockIDEditInput.value;
+				sheetBlockIDEditInput.value = (sbid * 1) + 1;
+
+				//Set Block details
+				let containerMargin = 		blockType == "G" ? "" : " m-1 ";
+				let bodyClass = 			blockType == "G" ? "sheet-block w100" : " div-block-body ";
+				let editStart = 			blockType == "G" ? "(" : actionStat;
+				let editContainerWidth = 	blockType == "G" ? "100%" : "calc(100% - .5rem)";
+				let editBorder = 			blockType == "G" ? "solid" : "none"; 
+				let blockID = currentBlockID++;
+				let newBlockID = "s"+sheetID+"b"+blockID; //ConLog("newBlockID: "+newBlockID);
+
+				let outerHTML = 
+					"<div id=\""+target+"\"></div>"
+					+"<div id=\""+newBlockID+"\" class=\"sheet-block sheet-export\" data-export=\""+editStart+"\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" style=\"width: 100%;\">"
+					+"	<!-- Block "+blockID+" -->"
+					+"	<div id=\""+newBlockID+"Container\" class=\"sheet-container sheet-block border "+containerMargin+"\" data-sheetID=\""+sheetID+"\" style=\"border-style: "+editBorder+" !important; width: "+editContainerWidth+"; overflow:auto;\">";
+				if(blockType != "G"){ 
+					outerHTML += 
+					"		<div id=\""+newBlockID+"Body\" class=\""+bodyClass+"\" data-sheetID=\""+sheetID+"\"\>"
+					+"			<input id=\""+newBlockID+"TypeEdit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" value=\""+blockType+"\" hidden/>"
+					+"			<div id=\""+newBlockID+"Start\">";
+					outerHTML += (blockType == 1)//Dynamic Number
+							?	"	<input id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-sbid=\""+sbid+"\" title=\"Block Value\" placeholder=\"Block Value\" type=\"number\"/>" : "";
+					outerHTML += (blockType == 3)//Dynamic Text
+							?	"	<textarea id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-sbid=\""+sbid+"\" title=\"Block Text\" placeholder=\"Block Text\"  rows=\"4\"></textarea>" : "";
+					outerHTML += 
+					"			</div>"
+					+"		</div>";
+				}
+				outerHTML += 
+					"		<div id=\""+newBlockID+"EditTopBtns\" class=\"btn-block-edit-top-btns\" data-sheetID=\""+sheetID+"\">"
+					+"			<div id=\""+newBlockID+"Edit\" class=\"btn btn-block-edit\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" style=\"float: left; display: block;\">Edit</div>"
+					+"			<span class=\"mb-2\" style=\"margin: auto;\">&nbsp</span>"
+					+"			<div id=\""+newBlockID+"Remove\" class=\"btn btn-block-remove\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" style=\"float: right; display: none;\">Remove</div>"
+					+"		</div>"
+					+"		<div id=\""+newBlockID+"EditForm\" class=\"sheet-block w100 div-block-edit\" data-sheetID=\""+sheetID+"\" style=\"display: none;\">"
+					+"			<div class=\"sheet-block w100 border\" style=\" min-width: 300px;\">"
+				if(blockType == "G"){
+					outerHTML += 
+					"				<input id=\""+newBlockID+"SbidEdit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" title=\"Sheet Block ID.\" placeholder=\"Sheet Block ID.\" type=\"number\" value=\""+sbid+"\"/>"
+									+CreateSelectBlockEdit(sheetID, newBlockID, "Width")
+									+CreateSelectBlockEdit(sheetID, newBlockID, "Border")
+									+CreateSelectBlockEdit(sheetID, newBlockID, "Togglable");
+				}else{
+					outerHTML += (blockType == 0)//Static Number
+							?	"	<input id=\""+newBlockID+"TextPlaceholder\" class=\"form-control\" data-sheetID=\""+sheetID+"\" title=\"Block Value\" placeholder=\"Block Value\" type=\"number\" />" 
+								+"	<input id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-editType=\"text\" data-sbid=\""+sbid+"\" hidden/>" 
+							: "";
+					outerHTML += (blockType == 2)//Static Text
+							?	"	<textarea id=\""+newBlockID+"TextPlaceholder\" class=\"form-control\" data-sheetID=\""+sheetID+"\" title=\"Block Text\" placeholder=\"Block Text\" rows=\"4\"></textarea>" 
+								+"	<textarea id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-editType=\"text\" data-sbid=\""+sbid+"\" hidden></textarea>"
+							: "";
+					outerHTML += 
+					"				<input id=\""+newBlockID+"SbidEdit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" title=\"Sheet Block ID.\" placeholder=\"Sheet Block ID.\" type=\"number\" value=\""+sbid+"\"/>"
+									+CreateSelectBlockEdit(sheetID, newBlockID, "Width")
+									+CreateSelectBlockEdit(sheetID, newBlockID, "Border")
+					+"				<input id=\""+newBlockID+"FontSizeEdit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-editType=\"fontSize\" title=\"Block Font Size, by rem. Default 1.\" placeholder=\"Stat Font Size, by rem. Default 1.\" type=\"number\"/>"
+									+CreateSelectBlockEdit(sheetID, newBlockID, "Align")
+									+CreateSelectBlockEdit(sheetID, newBlockID, "Togglable");
+				}
+				outerHTML += 
+					"			</div>"
+					+"			<div>"
+					+"				<div id=\""+newBlockID+"Apply\" class=\"btn btn-block-apply\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\">Apply</div>"
+					+"				<div style=\"float: right;\">"
+					+"					<div class=\"btn btn-block-duplicate\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>Duplicate</div>"
+					+"					<div class=\"btn btn-block-move-left-group\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>&lt&lt</div>"
+					+"					<div class=\"btn btn-block-move-left\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>&lt</div>"
+					+"					<div class=\"btn btn-block-move-right\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>&gt</div>"
+					+"					<div class=\"btn btn-block-move-right-group\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>&gt&gt</div>"
+					+"				</div>"
+					+"			</div>"
+					+"		</div>";
+				if(blockType == "G"){
+					outerHTML += 
+							CreateNewForm(newBlockID+"Start", sheetID)
+					+"		<div id=\""+newBlockID+"Body\" class=\""+bodyClass+"\">"
+					+"			<div id=\""+newBlockID+"Start\"></div>"
+					+"		</div>"
+					+"		<div class=\"sheet-export\" data-export=\")\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\"></div>";//groupEnd
+				}
+				outerHTML += 
+					"		<div class=\"sheet-export\" data-export=\"BLOCKEND\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\"></div>"
+					+"	</div>"
+						+CreateNewForm(newBlockID+"End", sheetID)
+					+"</div>"
+					+"<div id=\""+newBlockID+"End\"></div>";
+
+				
+				document.getElementById(target).outerHTML = outerHTML;
+				if(blockType == "G"){//Group border is solid by default
+					document.getElementById(newBlockID+"BorderEdit").value = "solid";
+				}
+				if(overrideBlockType == null && overrideTarget == null) document.getElementById(target+"NewToggle").click();
+
+				SetTogglables();
+				SetBlockEditButtons();
+			}
+		}
+		function OnClickCreateNewBlock(newBlock, overrideTarget = null, overrideSheetID = null, overrideBlockType = null){
+			newBlock.onclick = function(){ 
+				CreateNewBlock(this, overrideTarget, overrideSheetID, overrideBlockType);
+			}
+		}
+		//Advanced Tools' functionality
+		function ReSaveSheet(saveType, sheetForSave){
+			let msgConfirmation = (saveType == 0 ? "Duplicate" 
+									: (saveType == 1 ? "Move Left" 
+									: (saveType == 2 ? "Move Right" 
+									: (saveType == 3 ? "Move Left, treat group as 1 Block" 
+									: (saveType == 4 ? "Move Right, treat group as 1 Block" 
+									: "ERR")))));
+			let isConfirmed = userResaveWarning == 1 ? true
+				: window.confirm("WARNING: Experimental. This feature does not work 100% yet, at least make a back up. \nMake sure you have saved the sheet as it will be overwritten and reloaded. Continue "+msgConfirmation+"?");
+			if(isConfirmed){
+				SetOnClickSheetSave(saveType, sheetForSave);
+				let sheetID = sheetForSave.getAttribute("data-sheetID");
+				let idNewSheet = "sheet"+sheetID; //ConLog("idNewSheet: "+idNewSheet);
+				let sheetTitle = document.getElementById(idNewSheet+"Title").value; //ConLog("sheetTitle: "+sheetTitle);
+				LoadSheetBlocks(sheetID, FindInActionArray(actionCharSheet, sheetTitle));
+				//Re-toggle EditBlocks changes
+				document.getElementById(idNewSheet+"EditBlocks").click();
+				document.getElementById(idNewSheet+"EditBlocks").click();
+			}
+		}
+		function SetBlockEditButtonsResaves(){
+			let arrBlockDuplicate = document.getElementsByClassName("btn-block-duplicate");
+			for(let i = 0; i < arrBlockDuplicate.length; i++) {
+				arrBlockDuplicate[i].onclick = function() {
+					ReSaveSheet(0, this);
+				}
+			}
+			let arrBlockMoveLeft = document.getElementsByClassName("btn-block-move-left");
+			for(let i = 0; i < arrBlockMoveLeft.length; i++) {
+				arrBlockMoveLeft[i].onclick = function() {
+					ReSaveSheet(1, this);
+				}
+			}
+			let arrBlockMoveRight = document.getElementsByClassName("btn-block-move-right");
+			for(let i = 0; i < arrBlockMoveRight.length; i++) {
+				arrBlockMoveRight[i].onclick = function() {
+					ReSaveSheet(2, this);
+				}
+			}
+			let arrBlockMoveLeftGroup = document.getElementsByClassName("btn-block-move-left-group");
+			for(let i = 0; i < arrBlockMoveLeftGroup.length; i++) {
+				arrBlockMoveLeftGroup[i].onclick = function() {
+					ReSaveSheet(3, this);
+				}
+			}
+			let arrBlockMoveRightGroup = document.getElementsByClassName("btn-block-move-right-group");
+			for(let i = 0; i < arrBlockMoveRightGroup.length; i++) {
+				arrBlockMoveRightGroup[i].onclick = function() {
+					ReSaveSheet(4, this);
+				}
+			}
+		}
+		function SetBlockEditButtons(){
+			let arrBlockEdit = document.getElementsByClassName("btn-block-edit");
+			for(let i = 0; i < arrBlockEdit.length; i++) {
+				arrBlockEdit[i].onclick = function() {
+					this.innerHTML = this.innerHTML == "Edit" ? "Close" : "Edit";
+					let blockDivID = GetBlockDivID(this);
+					if(this.innerHTML == "Edit"){
+						DisplayById(blockDivID+"EditForm", "none");
+						DisplayById(blockDivID+"Remove", "none");
+						DisplayById(blockDivID+"Body", "block");
+					}else{
+						DisplayById(blockDivID+"EditForm", "block");
+						DisplayById(blockDivID+"Remove", "block");
+						DisplayById(blockDivID+"Body", "none");
+					}
+				}
+			}
+			let arrBlockRemove = document.getElementsByClassName("btn-block-remove");
+			for(let i = 0; i < arrBlockRemove.length; i++) {
+				arrBlockRemove[i].onclick = function() {
+					let isConfirmed = window.confirm("Continue removal?");
+					if (isConfirmed) {
+						let blockDivID = GetBlockDivID(this);
+						document.getElementById(blockDivID).remove();
+						document.getElementById(blockDivID+"End").remove();
+					}
+				}
+			}
+			let arrBlockNew = document.getElementsByClassName("btn-block-new");
+			for(let i = 0; i < arrBlockNew.length; i++) {
+				OnClickCreateNewBlock(arrBlockNew[i]); //ConLog("arrBlockNew["+i+"]: "); ConLog(arrBlockNew[i]);
+			}
+			let arrBlockApply = document.getElementsByClassName("btn-block-apply");
+			for(let i = 0; i < arrBlockApply.length; i++) {
+				arrBlockApply[i].onclick = function() {
+					let blockDivID = GetBlockDivID(this);
+					let blockType = this.getAttribute("data-blockType"); 
+
+					//Apply each Block Detail
+					let applyWidth = document.getElementById(blockDivID+"WidthEdit").value;
+					document.getElementById(blockDivID).style.width = applyWidth;
+
+					let applyBorder = document.getElementById(blockDivID+"BorderEdit").value;
+					document.getElementById(blockDivID+"Container").style.borderStyle = applyBorder;
+
+					let sheetID = this.getAttribute("data-sheetID");
+					if(blockType != "G"){
+						let applyFontSize = document.getElementById(blockDivID+"FontSizeEdit").value;
+						document.getElementById(blockDivID+"Start").style.fontSize = applyFontSize+"rem";
+
+						let applyAlign = document.getElementById(blockDivID+"AlignEdit").value;
+						document.getElementById(blockDivID+"Start").style.textAlign = applyAlign;
+
+						UpdateSheetBlock(this);
+					}
+					document.getElementById(blockDivID+"Edit").click();
+
+					//Keep dashed border if border style is set to none
+					BorderByClass("sheet-container", "dashed", sheetID, "none");
+				}
+			}
+			SetBlockEditButtonsResaves();
+		}
+			
+			//Tabs					
+		function OnloadForTabs(){
+			let tabHome = document.getElementById("tabHome");
+
+			let arrTabs = document.getElementsByClassName("tab");
+			for(let i = 0; i < arrTabs.length; i++) {
+				SetTab(arrTabs[i]);
+			}
+			//Close Tab
+			document.getElementById("btnTabClose").onclick = function() {
+				if(window.confirm("Are you sure you want to close this tab?")){
+					currentTabOpenCount--;
+					let arrCloseTab = document.getElementsByClassName("tab-active");
+					if(arrCloseTab[0].id != "tabHome"){
+						arrCloseTab[0].remove(); 
+						tabHome.classList.add("tab-active");
+						tabHome.click();
+					}
+				}
+			}
+			//Close All Tabs
+			document.getElementById("btnTabCloseAll").onclick = function() {
+				if(window.confirm("Are you sure you want to close all tabs?")){
+					currentTabOpenCount = 0;
+					
+					let arrCloseTabs = document.getElementsByClassName("tab");
+					let arrCloseAll = [];
+					for(let i = 0; i < arrCloseTabs.length; i++) {
+						if(arrCloseTabs[i].id != "tabHome"){
+							arrCloseAll.push(arrCloseTabs[i]);
+						}
+					}for(let i = 0; i < arrCloseAll.length; i++) {
+						arrCloseAll[i].remove();
+					}
+					tabHome.classList.add("tab-active");
+					tabHome.click();
+				}
+			}
+			//Create New Tab
+			document.getElementById("btnTabNew").onclick = function() {
+				ConLog("btnTabNew");
+				OpenTab();
+			}
+			//Edit Sheet
+			document.getElementById("btnTabEditSheet").onclick = function() {
+				if(currentTab > 0){
+					let sheetEditBtnsID = "sheet"+currentTab+"EditBtns";
+					let sheetEditBtns = document.getElementById(sheetEditBtnsID);
+					let btnEditBlocks = document.getElementById("sheet"+currentTab+"EditBlocks");
+					let btnPreText = "Toggle Sheet Block Edit: ";
+					if(sheetEditBtns.classList.contains('is-active')){
+						sheetEditBtns.classList.remove('is-active');
+						DisplayById(sheetEditBtnsID, "none");
+						btnEditBlocks.innerHTML = btnPreText+"ON";
+					}else{
+						sheetEditBtns.classList.add('is-active');
+						DisplayById(sheetEditBtnsID, "block");
+						btnEditBlocks.innerHTML = btnPreText+"OFF";
+					}
+					btnEditBlocks.click();
+				}
+			}
+			//Save Sheet
+			document.getElementById("btnTabSaveSheet").onclick = function() {
+				ConLog("btnTabSaveSheet");
+				OpenTab();
+			}
+
+			SetSheetButtons();
+			SetBlockEditButtons();
+		}
+
+		function OnloadForSettings(){
+			document.getElementById("btnSettings").onclick = function() {
+				ToggleDisplayById("divSettingsBody");
+			}
+			document.getElementById("tblSheetsImport").onclick = function() {
+				let btnPostText = "Import/Export";
+				if(this.innerHTML == btnPostText){
+					DisplayById("divImportBody", "none");
+					this.innerHTML = "Show "+btnPostText;
+				}else{
+					DisplayById("divImportBody", "block");
+					this.innerHTML = btnPostText;
+				}
+			}
+			document.getElementById("btnSheetsImport").onclick = function() {
+				//Eventualy implement ImportFromExportString
+				UpdateClassStringInArray(actionCharSheet, document.getElementById("importClassString").value);
+			}
+
+			//Set up for Template Sheets
+			let arrTemplateImports = document.getElementsByClassName("template-import");
+			for(let i = 0; i < arrTemplateImports.length; i++) {
+				arrTemplateImports[i].onclick = function() {
+					DisplayExportString(this.getAttribute("data-sheet"));
+				}
+			}
+			
+			//Danger 
+			document.getElementById("btnResetUserData").onclick = function() {
+				if(window.confirm("Are you sure you want to reset your user data/settings? This action is final.")){
+					UpdateUserData(true, true);
+					alert("RESET PAGE");
+				}
+			}
+			document.getElementById("btnDeleteAllSheets").onclick = function() {
+				if(window.confirm("Are you sure you want to delete all existing sheets? This action is final.")){
+					localStorage.setItem(storageSheets, "");
+					alert("RESET PAGE");
+				}
+			}
+
+			SetSheetButtons();
+			SetBlockEditButtons();
+		}
+
+
+		// === === === Dice Roller === === === =====================================================================================================================================================================================================
+		var drErr = null;
+		var arrRollDice = null; //Format text string input to valid Array
+		var arrRollDiceLog = null; //Stores log data for display in html
+		var arrRollDiceSteps = null; //Stores optional parsing steps for display in html
+		var divDiceRoller = document.getElementById("divDiceRoller");
+		function isNumeric(str) {
+			return !isNaN(str) && !isNaN(parseFloat(str));
+		}
+		function FindDice(arrOrig, txtDiceRollLog, origDiceTxt, dIndex){
+			let indexDice = arrRollDiceLog.indexOf(origDiceTxt);
+			if(indexDice >= 0){
+				//Check for duplicate dice
+				//to do...
+
+				//Replace dice preview to Results
+				arrRollDiceLog[indexDice] = txtDiceRollLog;
+			}
+		}
+		//Exponent, Dice, Mult, Div, Add, Sub
+		function SolveDEMDAS(arr, demdas, isBasic = false){
+			let arrSolved = [];
+			let found = arr.find((e) => e === demdas); //Check the arr for the demdas(d, ^, *, /, +, -)
+			if(found != undefined && drErr == null){
+				let left = null;
+				for (let i = 0; i < arr.length; i++) {
+					let txt = arr[i]; //ConLog("i: "+i+", txt: "+txt+", demdas: "+demdas);
+					if(isNumeric(txt)){
+						left = txt;
+					}else if(txt === demdas) {  
+						//Make sure left's value is valid
+						let origLeft = left;
+						left ??= demdas === 'd' ? 1 : 0;
+						let right = arr[++i]; //ConLog("right: "+right);
+						let forPush = txt;
+
+						if(demdas === 'd'){
+							//Dice Roll
+							let drAmount = left;
+							let drDie = right;
+							let ttlDiceRoll = 0;
+							let tempTxt = "";
+							//Roll the drDie drAmount of times
+							for (let d = 0; d < drAmount; d++) {
+								let result = Math.floor(Math.random() * drDie) + 1; //ConLog("d"+drDie+" roll: "+result);
+								ttlDiceRoll += result;
+								tempTxt += d == 0 ? result : "+"+result;
+							}
+							forPush = ttlDiceRoll;
+							let txtDiceRollLog = drAmount > 1 ? ttlDiceRoll : ""; 
+							txtDiceRollLog += "["+tempTxt+"]"; 
+
+							let origDiceTxt = origLeft == null ? "d"+right : left+"d"+right; //ConLog("origDiceTxt: "+origDiceTxt);
+							FindDice(arr, txtDiceRollLog, origDiceTxt, (i-1));
+
+						}else if(demdas === '^'){
+							//Exponents
+							forPush = left ** right;
+
+						}else if(demdas === '*'){
+							//Multiplication
+							forPush = left * right;
+
+						}else if(demdas === '/'){
+							//Division
+							forPush = left / right;
+
+						}else if(demdas === '+'){
+							//Addition
+							forPush = 1*left + 1*right; //ConLog(left+" + "+right);
+
+						}else if(demdas === '-'){
+							//Subtraction
+							forPush = left - right;
+						}
+
+						//Log the steps for the equation
+						arrRollDiceSteps.push(left+txt+right+" = "+forPush+""); //ConLog("forPush: "+forPush+" = "+left+txt+right);
+						
+						//Set result as new left value
+						left = forPush;  
+						
+					} else if(drErr == null){
+						//Include rest of equation
+						if(left != null) arrSolved.push(left); //ConLog("push left: "+left); 
+						arrSolved.push(txt); //ConLog("push txt: "+txt);
+						//Clear left when used
+						left = null; 
+					}
+				}
+				//Join last Numerals
+				if(left != null) arrSolved.push(left); //ConLog("push last: "+left); 
+				return arrSolved;
+			}
+			return arr;
+		}
+		function ParseEMDAS(arr, isBasic = false){
+			let arrOrig = arr;
+			let arrTemp = [];
+			isBasic = isBasic && !arr.find((e) => e === 'd');
+			arr = SolveDEMDAS(arr, 'd', isBasic);
+			arr = SolveDEMDAS(arr, '^', isBasic);
+			arr = SolveDEMDAS(arr, '*', isBasic);
+			arr = SolveDEMDAS(arr, '/', isBasic);
+			arr = SolveDEMDAS(arr, '+', isBasic);
+			arr = SolveDEMDAS(arr, '-', isBasic);
+			return arr.pop();
+		}
+		function ParseParenthesis(arr){ //ConLog("ParseParenthesis: "+arr);
+			let arrFinal = [];
+			let arrInner = [];
+			let countOpenP = 0;
+			let countCloseP = 0;
+			for (let i = 0; i < arr.length; i++) {
+				let txt = arr[i]; //ConLog("txt: "+txt);
+
+				if(txt === '(') {
+					//Check for open parenthesis
+					countOpenP++;
+					if(countOpenP > 1){
+						arrInner.push(txt); //ConLog("arrInner == (: "); ConLog(arrInner);
+					}
+				}else if(txt === ')') { 
+					//Check for closing parenthesis  
+					countCloseP++;
+					if(countOpenP == countCloseP){ //ConLog("countOpenP: "+countOpenP);
+						//If parenthesis closed check if no other parenthesis inside, if there is then recurse ParseParenthesis
+						if(countOpenP == 1) arrFinal.push(ParseEMDAS(arrInner, true));
+						else if(countOpenP > 1) arrFinal.push(ParseParenthesis(arrInner));
+						countOpenP = 0;
+						countCloseP = 0;
+						arrInner = [];
+					}else if(countOpenP > 1){
+						arrInner.push(txt); //ConLog("arrInner == ): "); ConLog(arrInner);
+					} 
+
+				}else if(countOpenP == 0){
+					//If no parenthesis push directly to final
+					arrFinal.push(txt);
+
+				}else if(countOpenP > 0 || countOpenP != countCloseP){
+					//If in parenthesis push to inner for future parsing
+					arrInner.push(txt); //ConLog("arrInner > 0: "); ConLog(arrInner);
+				}
+			}
+			//ConLog("ParseParenthesis, END, arrFinal: "+arrFinal);
+			return ParseEMDAS(arrFinal);
+		}
+		function ParseRollDice(txtDice, returnOnly = false) {
+			txtDice = txtDice.replace(/\s/g, "");
+			let drTxtResult = "";
+			arrRollDice = []; //Format text string input to valid Array
+			arrRollDiceLog = []; //Stores log data for display in html
+			arrRollDiceSteps = []; //Stores optional parsing steps for display in html
+			let arrNumeral = [];
+
+			//Format text string input to valid Array
+			for (let i = 0; i < txtDice.length; i++) {
+				let char = txtDice[i];
+				if(isNumeric(char) || char === '.'){
+					arrNumeral.push(char);
+				}else{
+					//Join Numerals
+					if(arrNumeral.length > 0){
+						arrRollDice.push(arrNumeral.join(''));
+						arrNumeral = [];
+					}
+					arrRollDice.push(char);
+				}
+			}
+			//Join last Numerals
+			if(arrNumeral.length > 0){
+				arrRollDice.push(arrNumeral.join(''));
+				arrNumeral = [];
+			}
+
+			let prev = null; 
+			//Format arrRollDiceLog to allow easy finding of dice. For final log display 
+			for (let i = 0; i < arrRollDice.length; i++) {
+				let txt = arrRollDice[i];
+				if(txt === 'd') {   
+					//ConLog(prev);
+					prev = (isNumeric(prev)) ? arrRollDiceLog.pop() : "";
+					arrRollDiceLog.push(prev+txt+arrRollDice[++i]);
+					//ConLog("arrRollDiceLog 1: "+arrRollDiceLog.toString().replaceAll(",", "")); ConLog(arrRollDiceLog);
+					prev = null;
+				}else{
+					//if(prev != null) 
+					prev = txt;
+					arrRollDiceLog.push(prev);
+				}
+			}
+			
+			//Parse arrRollDice
+			let drTotal = ParseParenthesis(arrRollDice); //ConLog(drTotal);
+
+			if(!returnOnly){
+				//ConLog("arrRollDiceLog END: "+arrRollDiceLog.toString().replaceAll(",", "")); ConLog(arrRollDiceLog);
+				drTxtResult = "<div id=\"endDiceRollLog\"></div>"
+					+"<div class=\"game-log "+"\">"
+						+txtDice.toString().replaceAll(",", "")+" = <strong class=\"\" style=\"display: inline; color: #FFF;\">"+drTotal+"</strong> = "+arrRollDiceLog.toString().replaceAll(",", "")
+						+"<div class=\"log-steps\" hidden>"
+							+arrRollDiceSteps.join(", ");
+						+"</div>";
+					+"</div>";
+				document.getElementById("endDiceRollLog").outerHTML = drTxtResult;
+			}else{
+				return drTotal;
+			}
+		}
+		function CheckRollDice(txtDice) {
+			if(event.key === 'Enter') {
+				//alert(txtDice.value);   
+				ParseRollDice(txtDice.value);     
+			}
+		}
+		function ApplyQuickDice(qDice){
+			qDice.onclick = function() {
+				//alert(this.innerHTML);
+				document.getElementById("txtDiceRoller").value = this.innerHTML;
+				ParseRollDice(this.innerHTML);   
+			}
+		}
+		function OnloadForDiceRoller(){
+			document.getElementById("btnDiceRollerSticky").onclick = function() {
+				this.innerHTML = this.innerHTML == "Sticky" ? "Unstuck" : "Sticky";
+				if(divDiceRoller.classList.contains('dr-stuck')){
+					divDiceRoller.classList.remove('dr-stuck');
+					document.getElementById("homeDiceRoller").appendChild(divDiceRoller);
+				}else{
+					divDiceRoller.classList.add('dr-stuck');
+					document.getElementById("footer").appendChild(divDiceRoller);
+				}
+			}
+			let arrQDice = document.getElementsByClassName("q-dice");
+			for(let i = 0; i < arrQDice.length; i++) {
+				ApplyQuickDice(arrQDice[i]);
+			}
+			document.getElementById("btnDiceRollerMin").onclick = function() {
+				this.innerHTML = this.innerHTML == "Minimize" ? "Open" : "Minimize";
+				ToggleDisplayById("bodyDiceRoller");
+			}
+			document.getElementById("tglDiceRollLog").onclick = function() {
+				this.innerHTML = this.innerHTML == "Show Log:" ? "Dice Roll Log:" : "Show Log:";
+				ToggleDisplayById("divDiceRollLog");
+			}
+		}
+
+
+
+
+		// === === === Defaults Initialization === === === =====================================================================================================================================================================================================
+
+
+		//Set up On Click functions per class 
+		window.onload = function() {
+			
+			//Set Defaults
+			let arrDefaultSheets = [
+`Tutorial!c!ShitCode!c!Here is a sheet where I teach you all the things you can do with ABCC. <br>
+TLDR. Just play around. I'm sure you'll get it.!c!1!c!!S!!b!2!b!First you should look around the edges of the screen. <br><br>
+At the top you'll see the tabs that are currently open and the Quick Controls. <br>
+Right now you should seeing these quick controls: 
+<ul>
+  <li>"Create New Tab": Self Explanatory</li>
+  <li>"Edit Sheet": More on this later</li>
+  <li>"Save Sheet": Self Explanatory</li>
+  <li>"Close All Tabs": Close all opened tabs. Make sure you have saved them all</li>
+  <li>"Close": Close just the currently opened tab</li>
+</ul>
+
+And if you haven't played around with the tabs you should see these tabs
+<ul>
+  <li>"Home": This Tab will always be here for you</li>
+  <li>"Tutorial": You are here</li>
+</ul>
+
+At the bottom right you should see a Dice Roller and the buttons: "Unstuck" and "Open".
+<ul>
+  <li>"Unstuck/Sticky": Send the Dice Roller to the Home tab or stick it back to the bottom right</li>
+  <li>"Open/Minimize": Show or hide the contents of the Dice Roller</li>
+</ul>!b!1!b!100%!b!none!b!1!b!left!b!0!b!!S!!b!2!b!Now come find this block by clicking the "Edit Sheet". This block should be the 2nd thing with a dashed border.<br>
+When you find it click the "Edit" Button and open up the text area.
+
+You should find a hidden text here...
+<!-- Hi! This hidden text is an HTML comment. -->
+<!-- 
+Block contents will be read as raw HTML so you'll want to know the basics, if you want to make it prettier that is. At the very least you should know <br> which is a line break or the equivalent to pressing the "Enter" key and the next line of text showing up bellow. 
+
+But before we talk about how Blocks work let's look at the things that popped up when you clicked "Edit Sheet".
+Right bellow the Quick Control buttons you will find this sheet's details. There should be Sheet Title/Name, Sheet Description, and Sheet Current ID. The title and description should be self explanatory, and as for the Current ID more on that later.
+
+Hop on to the next block where we'll take a closer look around editing a sheet.
+-->
+<br><br>
+<hr><br>!b!2!b!100%!b!none!b!1!b!left!b!0!b!!S!!b!2!b!... Bellow the sheet details and throughout the sheet you should see a plus sign(+) with a border around it. When you click it there will be a dropdown and a "Create New Block" button. There are 5 types of blocks: Static Number, Dynamic Number, Static Text, Dynamic Text, and Group. The block you are on and are reading from right now is a Static Text block.
+<br>
+Here's what they mean
+<ul>
+  <li>Static: Usually used for titles, descriptions, lore, or just any text you don't want or need to edit while viewing the sheet. </li>
+  <li>Dynamic : Editable even when viewing the sheet without editing it and are usually used for values that may frequently change, for example HP or Spell Slots. </li>
+  <li>Number: Will accept numbers only. </li>
+  <li>Text: Will accept any text. </li>
+  <li>Group: A block where you can put blocks inside of, even another group. This will be relevant for spacing your sheet and also when editing using the advanced tools like Duplication or Moving Blocks, more on those tools later. </li>
+</ul>
+
+Clicking "Create New Block" will take your selected block type and insert a new block in this sheet. 
+
+<!--
+Next up back to this block, What are the numbers and words bellow this text area?
+Before that, let's determine that this text that you're reading right now is the 1st input, which is the text content that will appear on the sheet.
+The 2nd input bellow should be "3". It will always be a number and is used as an id or identification. More on this later.
+3rd: Width should be self explanatory. It's how wide the block will be displayed.
+4th: Border should be self explanatory. Solid or no border when displayed. If you choose "No Border" you'll still see the dashed outline when editing to help you with orientation.
+5th: Font Size should be self explanatory. It's how big your font will be displayed.
+6th: Align should be self explanatory. it's how the contents of your Block will be aligned when displayed.
+
+Note: Groups will only have 3 inputs: ID, Width, and Border.
+
+Feel free to change some of this block's parameters bellow. You can preview your changes by clicking the "Apply" button at the lower left of this block. If you want to keep the changes you made head back to the Quick Controls and click "Save Sheet". There will be an alert to confirm that you want to overwrite the current version of the sheet.
+
+Hop on to the next block where we'll take a closer look around creating blocks and the advanced tools.
+-->
+<br><br>
+<hr><br>!b!3!b!100%!b!none!b!1!b!left!b!0!b!!S!!b!2!b!...
+<!-- 
+Let's look around this block that you're editing right now. 
+Top Right we see "Close" which will go back to the preview without applying your changes. Note that if you "Save Sheet" it will still apply any changes you made. 
+Top Right we see "Remove" which will remove this block and everything within it if the block is a group. Note that there is no undo as of yet. Always double check.
+Bottom Left we see "Apply" which as discussed in the above block will show your changes in the preview.
+Bottom Right we see some advanced tools.
+-->
+Advanced Tools:
+<ul>
+  <li>Duplicate: Copy the block and everything in it. The duplicate will be placed just after the original block. </li>
+  <li>&lt&lt : Move this block to the left. If the previous block is a group, move this block to before the start of that group. </li>
+  <li>&lt : Move this block to the left. If the previous block is a group, move this block inside the group towards the end.</li>
+  <li>&gt : Move this block to the right. If the next block is a group, move this block inside the group towards the start. </li>
+  <li>&gt&gt : Move this block to the right. If the next block is a group, move this block to after the end of that group. </li>
+  <li>==(Only for Static Text): if you put "==" as the start of a Static Text you can point to the value of another Number Block and it will be evaluated in the sheet's view Get the ID of the Number Block and enclose it in square brackets([]). ex. ID 1 = "7", Static Text = "==[1]*3". The sheet view will be "21".</li>
+</ul>!b!4!b!100%!b!none!b!1!b!left!b!0`, 
+
+
+
+`Template: Daggerheart!c!ShitCode!c!Lvl 1 Sorcerer example character from Core Daggerheart.!c!1!c!(!b!1!b!100%!b!none!b!0!b!(!b!2!b!83.33%!b!none!b!0!b!!S!!b!2!b!Name: Marlowe Fairwind!b!4!b!50%!b!solid!b!1!b!center!b!0!b!!S!!b!2!b!Pronouns: She/Her!b!5!b!50%!b!solid!b!1!b!center!b!0!b!!S!!b!2!b!Heritage: Loreborne Elf!b!6!b!50%!b!solid!b!1!b!center!b!0!b!!S!!b!2!b!Sub/Class: Primal Origin Sorcerer!b!7!b!50%!b!solid!b!1!b!center!b!0!b!)!b!(!b!3!b!16.66%!b!none!b!0!b!!S!!b!2!b!1!b!8!b!100%!b!none!b!2!b!center!b!0!b!!S!!b!2!b!Level!b!9!b!100%!b!none!b!1!b!center!b!0!b!)!b!)!b!!S!!b!2!b!<hr>!b!19!b!100%!b!none!b!1!b!left!b!0!b!(!b!20!b!100%!b!none!b!0!b!(!b!21!b!33.33%!b!none!b!0!b!(!b!23!b!33.33%!b!solid!b!0!b!!S!!b!0!b!10!b!24!b!100%!b!none!b!2.5!b!center!b!0!b!!S!!b!2!b!Evasion!b!25!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!53!b!66.66%!b!none!b!0!b!!S!!b!1!b!0!b!58!b!50%!b!none!b!2.5!b!right!b!0!b!!S!!b!2!b!/3!b!57!b!50%!b!none!b!2.5!b!left!b!0!b!!S!!b!2!b!Armor!b!55!b!100%!b!none!b!1!b!center!b!0!b!)!b!)!b!(!b!22!b!66.66%!b!solid!b!0!b!(!b!32!b!16.66%!b!none!b!0!b!!S!!b!0!b!0!b!33!b!100%!b!none!b!3!b!center!b!0!b!!S!!b!2!b!Agility!b!34!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!35!b!16.66%!b!none!b!0!b!!S!!b!0!b!-1!b!36!b!100%!b!none!b!3!b!center!b!0!b!!S!!b!2!b!Strength!b!37!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!38!b!16.66%!b!none!b!0!b!!S!!b!0!b!1!b!39!b!100%!b!none!b!3!b!center!b!0!b!!S!!b!2!b!Finesse!b!40!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!41!b!16.66%!b!none!b!0!b!!S!!b!0!b!2!b!42!b!100%!b!none!b!3!b!center!b!0!b!!S!!b!2!b!Instinct!b!43!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!44!b!16.66%!b!none!b!0!b!!S!!b!0!b!1!b!45!b!100%!b!none!b!3!b!center!b!0!b!!S!!b!2!b!Presence!b!46!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!47!b!16.66%!b!none!b!0!b!!S!!b!0!b!0!b!48!b!100%!b!none!b!3!b!center!b!0!b!!S!!b!2!b!Knowledge!b!49!b!100%!b!none!b!1!b!center!b!0!b!)!b!)!b!)!b!!S!!b!2!b!<hr>!b!51!b!100%!b!none!b!1!b!left!b!0!b!(!b!52!b!40%!b!none!b!0!b!(!b!60!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Damage & Health </strong>!b!61!b!100%!b!none!b!1.5!b!center!b!0!b!(!b!62!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Minor Damage</strong> <br>
+Mark 1 HP, if less than...!b!63!b!60%!b!none!b!1!b!left!b!0!b!!S!!b!2!b!7!b!64!b!40%!b!solid!b!2!b!center!b!0!b!)!b!(!b!65!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Major Damage</strong> <br>
+Mark 2 HP, if less than...!b!66!b!60%!b!none!b!1!b!left!b!0!b!!S!!b!2!b!14!b!67!b!40%!b!solid!b!2!b!center!b!0!b!)!b!(!b!68!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Severe Damage</strong> <br>
+Mark 3 HP, if less than...!b!69!b!60%!b!none!b!1!b!left!b!0!b!!S!!b!2!b!==2*[67]!b!70!b!40%!b!solid!b!2!b!center!b!0!b!)!b!(!b!76!b!100%!b!none!b!0!b!!S!!b!2!b!HP:!b!77!b!40%!b!none!b!2.5!b!right!b!0!b!(!b!78!b!60%!b!solid!b!0!b!!S!!b!1!b!6!b!79!b!50%!b!none!b!2.5!b!right!b!0!b!!S!!b!2!b!/6!b!80!b!50%!b!none!b!2.5!b!left!b!0!b!)!b!)!b!(!b!81!b!100%!b!none!b!0!b!!S!!b!2!b!Stamina:!b!82!b!40%!b!none!b!2!b!right!b!0!b!(!b!83!b!60%!b!solid!b!0!b!!S!!b!1!b!6!b!84!b!50%!b!none!b!2.5!b!right!b!0!b!!S!!b!2!b!/6!b!85!b!50%!b!none!b!2.5!b!left!b!0!b!)!b!)!b!)!b!(!b!86!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Hope </strong>!b!87!b!100%!b!none!b!1.5!b!center!b!0!b!!S!!b!1!b!3!b!88!b!50%!b!none!b!2.5!b!right!b!0!b!!S!!b!2!b!/6!b!89!b!50%!b!none!b!2.5!b!left!b!0!b!!S!!b!2!b!<strong>Volatile Magic</strong>: 
+Spend 3 Hope to reroll any number of your damage dice on an attack that deals magic damage.!b!90!b!100%!b!solid!b!1!b!center!b!0!b!)!b!(!b!91!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Experience </strong>!b!92!b!100%!b!none!b!1.5!b!center!b!0!b!(!b!94!b!100%!b!solid!b!0!b!!S!!b!2!b!Royal Mage!b!95!b!80%!b!none!b!1.25!b!left!b!0!b!!S!!b!0!b!2!b!96!b!20%!b!solid!b!1.25!b!center!b!0!b!)!b!(!b!97!b!100%!b!solid!b!0!b!!S!!b!2!b!Not On My Watch!b!98!b!80%!b!none!b!1.25!b!left!b!0!b!!S!!b!0!b!2!b!99!b!20%!b!solid!b!1.25!b!center!b!0!b!)!b!)!b!(!b!105!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Gold </strong>!b!106!b!100%!b!none!b!1.5!b!center!b!0!b!(!b!110!b!33.33%!b!solid!b!0!b!!S!!b!1!b!1!b!111!b!100%!b!none!b!3!b!center!b!0!b!!S!!b!2!b!Handfuls!b!112!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!113!b!33.33%!b!solid!b!0!b!!S!!b!1!b!0!b!114!b!100%!b!none!b!3!b!center!b!0!b!!S!!b!2!b!Bags!b!115!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!116!b!33.33%!b!solid!b!0!b!!S!!b!1!b!0!b!117!b!100%!b!none!b!3!b!center!b!0!b!!S!!b!2!b!Chests!b!118!b!100%!b!none!b!1!b!center!b!0!b!)!b!)!b!)!b!(!b!59!b!60%!b!none!b!0!b!(!b!119!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Active Weapons </strong>!b!120!b!100%!b!none!b!1.5!b!center!b!0!b!!S!!b!2!b!Proficiency 1!b!124!b!100%!b!none!b!1.25!b!center!b!0!b!(!b!121!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Primary</strong><br>
+Dualstaff - Instinct Far - d6+3 mag - Two-Handed
+<br><strong>Secondary</strong><br>
+n/a!b!125!b!100%!b!none!b!1!b!left!b!0!b!)!b!)!b!(!b!126!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Active Armor </strong>!b!127!b!100%!b!none!b!1.5!b!center!b!0!b!(!b!128!b!100%!b!solid!b!0!b!!S!!b!2!b!Leather Armor - Thresholds 6/13 - Score 3!b!129!b!100%!b!none!b!1!b!left!b!0!b!)!b!)!b!(!b!130!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Inventory </strong>!b!131!b!100%!b!none!b!1.5!b!center!b!0!b!(!b!132!b!100%!b!solid!b!0!b!!S!!b!3!b!Minor Stamina Potion (clear 1d4 stress)!b!134!b!100%!b!none!b!1!b!left!b!0!b!)!b!)!b!(!b!135!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Character Features </strong>!b!136!b!100%!b!none!b!1.5!b!center!b!0!b!(!b!137!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Heritage Feats</strong><hr>
+
+<strong>Quick Reactions</strong><br>
+Mark a Stress to gain advantage on a reaction roll.<br><br>
+
+<strong>Celestial Trance</strong><br>
+During a rest, you can drop into a trance to choose an additional downtime move.<br><br>
+
+<strong>Well-Read</strong><br>
+You have advantage on rolls that involve the
+history, culture, or politics of a prominent person or place<br><br>!b!139!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!164!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Class Feats</strong><hr>
+<strong>Arcane Sense</strong><br>
+You can sense the presence of magical people and objects within
+Close range.<br><br>
+
+<strong>Minor Illusion</strong><br>
+Make a Spellcast Roll (10). On a success, you create a minor visual illusion no larger than yourself within Close range. This illusion is convincing to anyone at Close range or farther.<br><br>
+
+<strong>Channel Raw Power</strong><br>
+Once per long rest, you can place a domain card from your loadout into your vault and choose to either:
+• Gain Hope equal to the level of the card.
+• Enhance a spell that deals damage, gaining a bonus.!b!165!b!100%!b!none!b!1!b!left!b!0!b!)!b!)!b!)!b!(!b!154!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Domain Cards </strong>!b!155!b!100%!b!none!b!2!b!center!b!0!b!(!b!158!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Loadout</strong><hr>!b!159!b!100%!b!none!b!1.5!b!center!b!0!b!!S!!b!3!b!RUNE WARD
+Level 1 Arcana Spell
+Recall Cost: 0
+You have a deeply personal trinket that can be infused with protective magic and held as a ward by you or an ally. Describe what it is and why it’s important to you. The ward’s holder can spend a Hope to reduce incoming damage by 1d8.
+If the Ward Die result is 8, the ward’s power ends after it reduces damage this turn. It can be recharged for free on your next rest.
+
+UNLEASH CHAOS
+Level 1 Arcana Spell
+Recall Cost: 1
+At the beginning of a session, place a number of tokens equal to your Spellcast trait on this card.
+Make a Spellcast Roll against a target within Far range and spend any number of tokens to channel raw energy from within yourself to unleash against them. On a success, roll a number of d10s equal to the tokens you spent and deal that much magic damage to the target. Mark a Stress to replenish this card with tokens (up to your Spellcast trait).
+At the end of each session, clear all unspent tokens.!b!160!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!161!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Vault</strong><hr>!b!162!b!100%!b!none!b!1.5!b!center!b!0!b!!S!!b!3!b!None Yet.!b!163!b!100%!b!none!b!1!b!left!b!0!b!)!b!)!b!(!b!144!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong> Character Notes </strong>!b!145!b!100%!b!none!b!1.55!b!center!b!0!b!!S!!b!2!b![Description]<br>
+Ornate clothes. Eyes like Lilacs. Tall Curvy Body. Skin the color of fine sand. Attitude like a commander.<br><br>
+
+[Background]<br>
+Q: What did you do that made the people in your community wary of you?<br>
+A: I tried to harness raw magic before I knew what I was doing and I destroyed a farm, ruining the harvest for that year. After that, I was treated as an outcast.<br><br>
+
+Q: What mentor taught you to control your untamed magic, and why are they no longer able to guide you?<br>
+A: Yarrow, a great mage who served on behalf of King Emeris, heard of the destruction I caused and sought me out. He taught me to harness magic. When he died, I became the right hand to the king instead. I miss him.<br><br>
+
+Q: You have a deep fear you hide from everyone. Why do we keep our shared past a secret? What is it, and why does it scare you?<br>
+A: On his deathbed, Yarrow said I was the only person who could keep King Emeris safe from the Harrows. I don’t know what they are, and everytime I’ve brought it up with the King, he refuses to tell me. I am afraid that in protecting me, he is dooming himself. <br><br>
+
+[Connections]<br>
+Q: Why do you trust me so deeply?<br>
+A: Barnacle - He trusts me because I am the closest thing he’s ever had to a mother. <br><br>
+
+Q: What did I do that makes you cautious around me?<br>
+A: Varian - They had a falling out with the king and are worried I might side with Emeris over them if it comes down to it. <br><br>
+
+Q: Why do we keep our shared past a secret?<br>
+A: Garrick - The king does not allow his inner circle to have personal relationships with anybody for fear they could compromise our work. We broke that rule many, many times.<br><br>!b!146!b!100%!b!solid!b!1!b!left!b!0!b!)`
+];
+
+
+			//Uncomment bellow to Hard Reset storageSheets
+			//localStorage.setItem(storageSheets, "");
+			
+			//Check Storage if there are any existing Class objects, else set the default ones
+			var defaultString = arrDefaultSheets[0];
+			for (let d = 1; d < arrDefaultSheets.length; d++) 
+				defaultString += actionCharSheet+arrDefaultSheets[d];
+			//ConLog("---=== TEST Defaults: ");
+			StorageStringToArray(storageSheets, defaultString);
+			InsertArrayIntoStorage(actionCharSheet);
+			//DisplayArr(actionCharSheet);
+
+			//Toggleables
+			SetTogglables();
+			OnloadForSettings();
+			OnloadForTabs();
+			OnloadForDiceRoller();
+			
+			
+
+			//For Testing
+			//document.getElementById("tblSheetsImport").click();
+			//document.getElementById("importClassString").value = "test!c!User!c!123!c!1!c!(!b!1!b!33.33%!b!solid!b!0!b!!b!)!b!(!b!2!b!33.33%!b!none!b!0!b!!S!!b!3!b!test!b!4!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!3!b!33.33%!b!solid!b!0!b!!b!)";
+			
+			//Initial display of Dice Roller
+			document.getElementById("btnDiceRollerSticky").click();
+			document.getElementById("btnDiceRollerMin").click();
+
+			//*
+			UpdateUserData();
+			StorageStringToArray(storageSheets); 
+			InsertArrayIntoStorage(actionCharSheet); //ConLog("Char Sheets: "); ConLog(ArrayToString(actionCharSheet));
+			SetSheetButtons();
+			SetSheetTableButtons();
+			//*/
+		}
+	</script>
+</body>
+</html>
