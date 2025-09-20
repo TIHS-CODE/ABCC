@@ -1,5 +1,5 @@
 <!-- Hi. If you're reading this then I will assume you know the basic shit already. -->
-<!-- ao20250808: Initial Release. -->
+<!-- ao20250920: Added the "Shit guide to Trench Crusade" sheet and new Quick Dice. -->
 <!DOCTYPE html>
 <html class="dark">
 <head>
@@ -281,8 +281,8 @@
 					<span id="btnTabEditSheet" class="btn qc" style="display: none;">Edit Sheet</span>
 					<span id="btnTabSaveSheet" class="btn qc btn-sheet-save" data-sheetID="current" style="display: none;">Save Sheet</span>
 					<div style="float: right;">
-							<span id="btnSheetsDisplayArray" class="btn qc" style="display: none;">Display Array</span>
-							<span id="btnSheetsDisplayStorage" class="btn qc" style="display: none;">Display Storage</span>
+						<span id="btnSheetsDisplayArray" class="btn qc" style="display: inline-block;">Display Array</span>
+						<span id="btnSheetsDisplayStorage" class="btn qc" style="display: inline-block;">Display Storage</span>
 						<span id="btnTabCloseAll" class="btn qc" style="display: none;">Close All Tabs</span>
 						<span id="btnTabClose" class="btn qc" style="display: none;">Close</span>
 					</div>
@@ -290,7 +290,7 @@
 			</div>
 			<div id="sheet0" class="sheet" style="padding-bottom: 2rem;">
 				<h1 style="margin-bottom: 0;">A Budget Character Creator</h1>
-				v0.1.1
+				v0.1.2
 				<h6 style="margin: 0;">By: TIHS_CODE</h6>
 				<h6 style="margin: 0;"><a href="https://tihs-code.neocities.org/" target="_blank" class="btn" style="color: inherit;">Check out my other projects</a></h6>
 				<p>
@@ -319,8 +319,9 @@
 							<span id="btnSheetsImport" class="btn">Import</span>
 							<hr>
 							<h4 style="margin-bottom: .25rem;">Import Sheet Templates: </h4>
-							<span class="btn template-import" data-sheet="Tutorial">Tutorial</span>
-							<span class="btn template-import" data-sheet="Template: Daggerheart">Daggerheart</span>
+							<span class="btn template-import" data-sheet="0">Tutorial</span>
+							<span class="btn template-import" data-sheet="1">Daggerheart</span>
+							<span class="btn template-import" data-sheet="2">Shit guide to Trench Crusade</span>
 						</div>
 					</div>
 				</div>
@@ -341,6 +342,8 @@
 							<div class="btn q-dice">d20</div>
 							<div class="btn q-dice">d100</div>
 							<div class="btn q-dice">2d12</div>
+							<div class="btn q-dice">2d6</div>
+							<div class="btn q-dice">3d6</div>
 							<div class="btn q-dice">4d6</div>
 							<div class="btn q-dice">8d6</div>
 							<div class="" style="width: 100%; text-align: center; color: #ddd;">
@@ -1067,7 +1070,7 @@
 		var arrSheetStorage = [];
 		function StorageStringToArray(storageItem, overrideString = "") {
 			let storageString = localStorage.getItem(storageItem); //ConLog("StorageStringToArray PRE, "+storageItem+": "+storageString);
-			storageString ??= overrideString; //ConLog("StorageStringToArray POST, "+storageItem+": "+storageString);
+			storageString = isValidX5(storageString) ? storageString : overrideString; //ConLog("StorageStringToArray POST, "+storageItem+": "+storageString);
 			if(storageString){
 				let action = (storageItem == storageSheets ? actionCharSheet : null);
 				if(action == actionCharSheet) arrCharSheets = []; 
@@ -1609,15 +1612,15 @@
 				document.getElementById("btnTabEditSheet").click(); 
 			}
 		}
-		function DisplayExportString(sheetName){
-			let sheetForExport = FindInActionArray(actionCharSheet, sheetName);
-			document.getElementById("importClassString").value = sheetForExport.DetailsToString();
+		function DisplayExportString(sheetName, isDefaultSheet = false){
+			let sheetForExport = isDefaultSheet ? arrDefaultSheets[sheetName] : FindInActionArray(actionCharSheet, sheetName); ConLog("sheetName: "); ConLog(sheetName);
+			document.getElementById("importClassString").value = isDefaultSheet ? sheetForExport : sheetForExport.DetailsToString();
 			let ioDisplay = document.getElementById("tblSheetsImport");
 			if(ioDisplay.innerHTML != "Import/Export") ioDisplay.click();
 		}
 		function GetSheetNameFromTable(sheetRow){
 			let sheetID = sheetRow.getAttribute("data-sheetID"); 
-			return document.getElementById("tblSheetName"+sheetID).innerHTML; 
+			return document.getElementById("tblSheetName"+sheetID).innerText; 
 		}
 		function SetSheetTableButtons(){
 			let arrSheetOpen = document.getElementsByClassName("btn-sheet-open");
@@ -2048,7 +2051,7 @@
 			let arrTemplateImports = document.getElementsByClassName("template-import");
 			for(let i = 0; i < arrTemplateImports.length; i++) {
 				arrTemplateImports[i].onclick = function() {
-					DisplayExportString(this.getAttribute("data-sheet"));
+					DisplayExportString(this.getAttribute("data-sheet"), true);
 				}
 			}
 			
@@ -2329,7 +2332,7 @@
 		window.onload = function() {
 			
 			//Set Defaults
-			let arrDefaultSheets = [
+			arrDefaultSheets = [
 `Tutorial!c!ShitCode!c!Here is a sheet where I teach you all the things you can do with ABCC. <br>
 TLDR. Just play around. I'm sure you'll get it.!c!1!c!!S!!b!2!b!First you should look around the edges of the screen. <br><br>
 At the top you'll see the tabs that are currently open and the Quick Controls. <br>
@@ -2475,7 +2478,230 @@ Q: What did I do that makes you cautious around me?<br>
 A: Varian - They had a falling out with the king and are worried I might side with Emeris over them if it comes down to it. <br><br>
 
 Q: Why do we keep our shared past a secret?<br>
-A: Garrick - The king does not allow his inner circle to have personal relationships with anybody for fear they could compromise our work. We broke that rule many, many times.<br><br>!b!146!b!100%!b!solid!b!1!b!left!b!0!b!)`
+A: Garrick - The king does not allow his inner circle to have personal relationships with anybody for fear they could compromise our work. We broke that rule many, many times.<br><br>!b!146!b!100%!b!solid!b!1!b!left!b!0!b!)`, 
+
+
+
+`Shit guide to Trench Crusade!c!ShitCode!c!Common rules used in Trench Crusade v1.6.3!c!1!c!(!b!1!b!100%!b!solid!b!0!b!!S!!b!2!b!Grab the rules over at <a href="https://www.trenchcrusade.com/rules" target="_blank" style="color: #FFF"> https://www.trenchcrusade.com/rules <a>
+
+<br><br>
+Measurements for the rest of the world<br>
+1" = 1in = 2.5cm = 25.4mm
+
+<br><br>
+Feel free to format this guide however you like. If you see an error shoot an email or lmk on Discord.!b!2!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!3!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Combat/Initiative Terms</strong>!b!4!b!100%!b!none!b!2!b!left!b!0!b!!S!!b!2!b!<ul>
+<li><strong>ACTION</strong>: Things your unit can do. Each action can only be done once unless the unit stats say otherwise.</li>
+<li><strong>ACTIVATION</strong>: Decide which of your units can do their actions</li>
+<li><strong>TURN</strong>: 
+  <ul>
+    <li>Players alternate activating their units that have not been activated yet.</li>
+    <li>Smaller unit count decides who goes first, if equal then roll off to be the decider.</li>
+  </ul>
+</li>
+<li><strong>MORALE</strong>:
+  <ul>
+    <li>After each <strong>TURN</strong> each player who has half or more of their units <strong>DOWNED</strong> or <strong>OUT OF ACTION</strong> must roll an <strong>ACTION</strong> to remain in battle.</li>
+    <li>Smaller unit count decides who rolls <strong>MORALE</strong> first, if equal then roll off to be the decider.</li>
+    <li><strong>OPTIONAL RULE</strong>: Once per battle on a failed <strong>MORALE</strong> roll the player may choose to have all remaining units be <strong>SHAKEN</strong>, meaning all <strong>ACTIONS</strong> are <strong>RISKY</strong>.</li>
+  </ul>
+</li>
+</ul>!b!5!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!6!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Basic Rolling Rules</strong>!b!7!b!100%!b!none!b!2!b!left!b!0!b!!S!!b!2!b!<ul>
+<li>Action Rolls are 2d6 by default.</li>
+<li><strong>+DICE</strong> and <strong>-DICE</strong> modify how Action Rolls are made. For each <strong>+/-DICE</strong> add a d6 to the default 2d6.</li>   
+<li>If multiple sources give you both + and - <strong>DICE</strong> then cancel 1 from each until only one type remains.</li>
+<li>Your final result will usually be the sum of two Dice, if you have <strong>+DICE</strong> then it's the sum the two Highest Dice, if you have <strong>-DICE</strong> then it's the sum the two Lowest Dice.</li>
+<li>Example dice pools: 
+  <ul>
+    <li><strong>-2 DICE</strong> = 4d6, sum of the lowest 2 dice</li>
+    <li><strong>+1 DICE</strong> = 3d6, sum of the highest 2 dice</li>
+    <li><strong>-2 DICE +1 DICE</strong> = <strong>-1 DICE</strong> = 3d6, sum of the lowest 2 dice</li>
+  </ul>
+</li>
+<li>If you Fail on a <strong>RISKY ACTION</strong> then your <strong>ACTIVATION</strong> ends.</li>
+<li>Any result that ends up a fraction is rounded up to the nearest whole number.</li>
+</ul>!b!8!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!9!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>ACTION Success Chart</strong>!b!10!b!100%!b!none!b!2!b!left!b!0!b!!S!!b!2!b!<table style="width: 100%; ">
+  <thead>
+    <tr>
+      <th scope="col">Dice Result</th>
+      <th scope="col" style="text-align: left;">Result Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">2-6</td>
+      <td style="text-align: left;">Failure</td>
+    </tr>
+    <tr>
+      <th scope="row">7-11</th>
+      <td style="text-align: left;">Success</td>
+    </tr>
+    <tr>
+      <th scope="row">12+</th>
+      <td style="text-align: left;">Critical Success: <strong>ATTACK ACTIONS</strong> gain <strong>+1 DICE</strong> to the Injury roll.</td>
+    </tr>
+  </tbody>
+</table>!b!11!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!12!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>INJURY Chart</strong>!b!13!b!100%!b!none!b!2!b!left!b!0!b!!S!!b!2!b!<table style="width: 100%; ">
+  <thead>
+    <tr>
+      <th scope="col">Dice Result</th>
+      <th scope="col" style="text-align: left;">Result Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1 or less</td>
+      <td style="text-align: left;">No Effect</td>
+    </tr>
+    <tr>
+      <th scope="row">2-6</th>
+      <td style="text-align: left;"><strong>MINOR HIT</strong>: Mark a <strong>BLOODMARKER</strong> (<strong>BM</strong>).</td>
+    </tr>
+    <tr>
+      <th scope="row" style="vertical-align: top;">7-11</th>
+      <td style="text-align: left;"><strong>DOWN</strong>: If already <strong>DOWNED</strong> instead mark 2 <strong>BM</strong>.
+        <ul>
+          <li>Gain <strong>+1 DICE</strong> to <strong>INJURY</strong> rolls vs units that are <strong>DOWNED</strong>.</li>
+          <li>Standing up from being <strong>DOWNED</strong> will halve your next Movement <strong>ACTION</strong> this <strong>ACTIVATION</strong>.</li>
+          <li>If <strong>DOWNED</strong> during it's own <strong>ACTIVATION</strong>, it can roll a <strong>RISKY ACTION</strong> to remain standing up.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">9+</th>
+      <td style="text-align: left;"><strong>OUT OF ACTION</strong>: The unit is removed from the map.</td>
+    </tr>
+  </tbody>
+</table>!b!14!b!100%!b!none!b!1!b!center!b!0!b!)!b!(!b!15!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>List of ACTIONS</strong>!b!16!b!100%!b!none!b!2!b!left!b!0!b!(!b!17!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">MOVE</strong>
+<ul>
+  <li>Does not require an Action Roll.</li>
+  <li>You can move through allied units.</li>
+  <li>Split into 3 further options:
+    <ol>
+      <li>
+        <strong style="font-size: 1.25rem;">Standard MOVE</strong>
+        <ul>
+          <li>Move the unit up to it's listed Movement stat.</li>
+          <li>You cannot move within 1" of an enemy unit.</li>
+          <li>You cannot leave Melee Combat but can move anywhere within 1" of all enemy units you are currently in Melee Combat with.</li>
+        </ul>
+      </li>
+      <li>
+        <strong style="font-size: 1.25rem;">CHARGE</strong>
+        <ul>
+          <li>You cannot leave Melee Combat using <strong>CHARGE</strong>.</li>
+          <li>You cannot <strong>CHARGE</strong> if you had previously made a <strong>RANGED ATTACK</strong> during this <strong>ACTIVATION</strong> unless your unit's ranged weapon has the <strong>ASSAULT</strong> keyword.</li>
+          <li>Choose an enemy unit w/in 12". Move your unit with a +6" movement bonus to the chosen enemy unit using the shortest and most direct path.</li>
+          <li>You can move within 1" of an enemy unit putting both units into <strong>MELEE COMBAT</strong> with each other.</li>
+        </ul>
+      </li>
+      <li>
+        <strong style="font-size: 1.25rem;">RETREAT</strong>
+        <ul>
+          <li>Move the unit up to it's listed Movement stat.</li>
+          <li>You cannot move within 1" of an enemy unit.</li>
+          <li>You can leave Melee Combat however before moving your unit, each enemy unit in Melee Combat with your retreating unit get a free Melee Attack on it.</li>
+          <li>Resolve all Attacks before moving the unit.</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+</ul>!b!18!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!19!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">DASH</strong>
+  <ul>
+    <li>On a successful <strong>RISKY ACTION</strong>, make a Standard <strong>MOVE</strong>.</li>
+    <li>This can be done in addition to any other <strong>ACTION</strong>.</li>
+  </ul>!b!20!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!21!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">RANGED ATTACK</strong>
+<ul>
+  <li>You cannot make a <strong>RANGED ATTACK</strong> if this unit is in <strong>MELEE COMBAT</strong>.</li>
+  <li>You cannot make a <strong>RANGED ATTACK</strong> if this unit has <strong>CHARGED</strong> this <strong>ACTIVATION</strong> unless your unit's ranged weapon has the <strong>ASSAULT</strong> keyword.</li>
+  <li>You cannot make a <strong>RANGED ATTACK</strong> if this unit has already made a <strong>RANGED ATTACK</strong> this <strong>ACTIVATION</strong> unless otherwise stated by the unit or weapon stats.</li>
+  <li>Your unit must be able to see the target and the target must be in range of your weapon.</li>
+  <li>If all of the above are valid, make a <strong>RANGED ATTACK</strong> using the unit's Ranged Weapon.</li>
+  <li><strong>RANGED ATTACK</strong> Modifiers:
+    <ul>
+      <li><strong>COVER</strong>: An attacking unit gains <strong>-1 DICE</strong> if the target is touching and partially behind a non unit model that is at least as thick as the target's base.</li>
+      <li><strong>Long Range</strong>: An attacking unit gains <strong>-1 DICE</strong> if the target is more than half your weapons max Range.</li>
+      <li><strong>Elevation</strong>: An attacking unit gains <strong>-1 DICE</strong> if it is higher than 2" from the target's base. If attacking unit's base is at least 50mm then it must be 4" or higher.</li>
+    </ul>
+  </li>
+</ul>!b!22!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!23!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">MELEE ATTACK</strong>
+<ul>
+  <li>If this unit is in <strong>MELEE COMBAT</strong> make a <strong>MELEE ATTACK</strong> using your unit's Melee Weapon.</li>
+  <li><strong>MELEE ATTACK</strong> Modifiers:
+    <ul>
+      <li><strong>DEFENDED OBSTACLE</strong>: An attacking unit gains <strong>-1 DICE</strong> if the target is not <strong>DOWNED</strong>, touching the obstacle, the obstacle is at least 1/2" tall, and the obstacle is between the target and the attacking unit.</li>
+      <li><strong>OFFHAND</strong>: If a unit is wielding two or more weapons of the same type then one of them is considered <strong>OFFHAND</strong> meaning that weapon gains a <strong>-1 DICE</strong> unless otherwise stated by the weapon's stats.</li>
+    </ul>
+  </li>
+</ul>!b!24!b!100%!b!none!b!1!b!left!b!0!b!)!b!)!b!(!b!34!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Blood/Blessing Markers</strong>!b!35!b!100%!b!none!b!2!b!left!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">BLOOD MARKER</strong>
+<ul>
+<li>Blood Markers tell you that a unit is more likely to fail their <strong>ACTIONS</strong> or sustain a more severe <strong>INJURY</strong>.</li>
+<li>Each time a unit suffers an <strong>INJURY</strong> but is not <strong>OUT OF ACTION</strong> it is gains a count of <strong>BLOOD MARKER</strong>.</li>    
+<li>While an enemy unit has one or more <strong>BLOOD MARKERS</strong> you can declare to expend one or more of it's <strong>BM</strong> to produce these effects:
+  <ul>
+    <li>When an enemy unit takes an <strong>ACTION</strong> you may give that <strong>ACTION -DICE</strong> per expended <strong>BM</strong>.</li>
+    <li>When you are about to roll for <strong>INJURY</strong> on an enemy unit you may give that <strong>INJURY +DICE</strong> per expended <strong>BM</strong>.</li>
+  </ul>
+</li>
+<li><strong>BLOODBATH</strong>: 
+  <ul>
+    <li>Before you roll for <strong>INJURY</strong> if the enemy unit has 6BM(or 3BM if it is <strong>DOWNED</strong>) you can add a d6 to the <strong>INJURY</strong> roll.</li>
+    <li>The added D6 counts towards your roll's final result.</li>
+    <li>Ex. <strong>INJURY</strong> from Bayonet w/ <strong>BLOODBATH</strong> <strong>+2 DICE</strong> = 2d6(from Bayonet) + 2d6(from <strong>+DICE</strong>) + 1d6(from <strong>BLOODBATH</strong>) = 5d6, take the Highest 3 dice.</li>
+  </ul>
+</li>
+</ul>
+
+<strong style="font-size: 1.25rem;">BLESSING MARKER</strong>
+<ul>
+<li>Works almost identical to <strong>BLOOD MARKERS</strong> except you decide on your own units whether to give their <strong>ACTION +DICE</strong> or give the opponent's <strong>INJURY</strong> roll <strong>-DICE</strong> per expended <strong>BLESSING MARKER</strong>.</li>
+</ul>!b!36!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!37!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong>Movement Extras</strong>!b!38!b!100%!b!none!b!2!b!left!b!0!b!(!b!39!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">DIVING CHARGE</strong>
+<ul>
+  <li>A unit is considered to be doing a <strong>DIVING CHARGE</strong> if the following applies:
+    <ul>
+      <li>The unit is <strong>CHARGING</strong> a target.</li>
+      <li>The unit jumps down as part of the charge.</li>
+      <li>The unit lands w/in 2" of the target.</li>
+      <li>The unit jumped from a ledge at least 3" and at most 6" from the target's base.</li>
+    </ul>
+  </li>
+  <li>Place the <strong>CHARGING</strong> unit w/in 1" of the target and roll a <strong>RISKY ACTION</strong>.</li>
+  <li>On a successful <strong>RISKY ACTION</strong>, the <strong>CHARGING</strong> unit gains a <strong>+1 DICE</strong> to it's <strong>ATTACK ACTION</strong> and <strong>INJURY</strong> roll if they hit, ignoring any <strong>DEFENDED OBSTACLE</strong> of the target.</li>
+  <li>On a failed <strong>RISKY ACTION</strong>, the <strong>CHARGING</strong> unit is <strong>DOWN</strong> and is <strong>INJURED</strong> as per the rules for Falling.</li>
+</ul>!b!40!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!41!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">Climbing</strong>
+<ul>
+  <li>When climbing sheer surfaces and the unit has enough movement to clear the entire surface, roll a <strong>RISKY ACTION</strong>.</li>
+  <li>On a failed <strong>RISKY ACTION</strong>, the unit remains where it is.</li>
+</ul>!b!42!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!43!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">Jumping Over Gaps</strong>
+<ul>
+  <li>As a <strong>RISKY ACTION</strong> a unit can jump over gaps if the following applies:
+    <ul>
+      <li>the unit has enough remaining movement to clear the gap.</li>
+      <li>the starting and landing edges' horizontal difference is at most half of unit movement stat.</li>
+      <li>the starting and landing edges' vertical difference is at most 1" (Movement cost extra 1" if gap height is at least 1/2").</li>
+    </ul>
+  </li>
+  <li>On a successful <strong>RISKY ACTION</strong>, place the unit at the landing edge and continue Movement.</li>
+  <li>On a failed <strong>RISKY ACTION</strong>, the unit falls as if it fell from a ledge on either side of the gap of the opponent’s choice.</li>
+</ul>
+
+<br>
+ShitCode's Note: Jumping a gap the same distance as a unit's base should be free. lmk if it is and I just missed it.!b!44!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!45!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">Falling</strong>
+<ul>
+  <li>If a unit falls at least 3" it rolls for <strong>INJURY</strong>.</li>
+  <li>For every 3" more it falls add <strong>+1 DICE</strong> to <strong>INJURY</strong> roll.</li>
+  <li>If a unit is <strong>DOWNED</strong> w/in 1" of a ledge they must succeed on an <strong>ACTION</strong> roll to stay in place.</li>
+</ul>!b!46!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!47!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">Terrain Types</strong>
+<ul>
+  <li><strong>Open</strong>: Common surfaces with at most 1" difference.</li>
+  <li><strong>Difficult</strong>: Uncommon surfaces, Debris, etc. Costs double movement.</li>
+  <li><strong>Dangerous</strong>: Hazardous surfaces. Whenever a unit moves into, or starts its <strong>ACTIVATION</strong> in Dangerous Terrain, roll an <strong>ACTION</strong> (if moving into counts as <strong>RISKY ACTION</strong>). On a failed <strong>ACTION</strong>, the unit rolls for <strong>INJURY</strong>.</li>
+  <li><strong>Impassable</strong>: Units cannot move through.</li>
+</ul>
+Terrain can be both Difficult and Dangerous.!b!48!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!49!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">Movement Type</strong>
+<ul>
+  <li><strong>Infantry</strong>: Standard Movement on the ground.</li>
+  <li><strong>Flying</strong>: Ignores Difficult and Dangerous terrain, as well as Climbing and Jumping movement rules.</li>
+</ul>!b!50!b!100%!b!none!b!1!b!left!b!0!b!)!b!)`
 ];
 
 
