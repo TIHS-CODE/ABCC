@@ -1,5 +1,5 @@
 <!-- Hi. If you're reading this then I will assume you know the basic shit already. -->
-<!-- ao20250920: Added the "Shit guide to Trench Crusade" sheet and new Quick Dice. -->
+<!-- ao20250926: Button for toggling default sheets' rows and updating all default sheets. Hotfix for Trench Crusade Ranged Attack Elevation typo. -->
 <!DOCTYPE html>
 <html class="dark">
 <head>
@@ -281,8 +281,8 @@
 					<span id="btnTabEditSheet" class="btn qc" style="display: none;">Edit Sheet</span>
 					<span id="btnTabSaveSheet" class="btn qc btn-sheet-save" data-sheetID="current" style="display: none;">Save Sheet</span>
 					<div style="float: right;">
-						<span id="btnSheetsDisplayArray" class="btn qc" style="display: inline-block;">Display Array</span>
-						<span id="btnSheetsDisplayStorage" class="btn qc" style="display: inline-block;">Display Storage</span>
+						<span id="btnSheetsDisplayArray" class="btn qc" style="display: none;">Display Array</span>
+						<span id="btnSheetsDisplayStorage" class="btn qc" style="display: none;">Display Storage</span>
 						<span id="btnTabCloseAll" class="btn qc" style="display: none;">Close All Tabs</span>
 						<span id="btnTabClose" class="btn qc" style="display: none;">Close</span>
 					</div>
@@ -290,12 +290,13 @@
 			</div>
 			<div id="sheet0" class="sheet" style="padding-bottom: 2rem;">
 				<h1 style="margin-bottom: 0;">A Budget Character Creator</h1>
-				v0.1.2
+				v0.1.2.1
 				<h6 style="margin: 0;">By: TIHS_CODE</h6>
 				<h6 style="margin: 0;"><a href="https://tihs-code.neocities.org/" target="_blank" class="btn" style="color: inherit;">Check out my other projects</a></h6>
 				<p>
 					Create a character sheet from scratch using blocks to your specifications.
 					<br>If you find the sheets too scrunched up enable Desktop site in your browser.
+					<br>The default sheet templates do not auto update, so if you find an typo, error, or bug try to update them using the "Update All Default Sheet Templates" button on the "Import/Export" section. If it's still there please let me know via email or on Discord.
 				</p>
 				<hr>
 
@@ -313,6 +314,7 @@
 					</table>
 					<div style="width: 100%; text-align: center;">
 						<hr>
+						<h3 id="tblSheetsDefaultToggle" class="btn" style="margin: .25rem;">Hide Default Sheets</h3>
 						<h3 id="tblSheetsImport" class="btn" style="margin: .25rem;">Show Import/Export</h3>
 						<div id="divImportBody" style="display: none;">
 							<textarea id="importClassString" rows="4" class="form-control" placeholder="Paste an export string here and click the Import button bellow to see it in the Character Sheets table above."></textarea>
@@ -322,6 +324,8 @@
 							<span class="btn template-import" data-sheet="0">Tutorial</span>
 							<span class="btn template-import" data-sheet="1">Daggerheart</span>
 							<span class="btn template-import" data-sheet="2">Shit guide to Trench Crusade</span>
+							<br><br>
+							<span id="btnUpdateTemplates" class="btn" >Update All Default Sheet Templates</span>
 						</div>
 					</div>
 				</div>
@@ -670,15 +674,18 @@
 		}
 
 		//Create Table Row
+		const classDefaultSheet = "row-default";
 		function CreateTableRow(divID, id, sheet){
 			let htmlBtnOpen = `<div class="btn btn-sheet-open" data-sheetID="`+id+`">Open</div>`;
 			let htmlBtnExport = `<div class="btn btn-sheet-export" data-sheetID="`+id+`">Export</div>`;
 			let htmlBtnDelete = sheet.createdBy != userDataName ? "" : `<div class="btn btn-sheet-delete" data-sheetID="`+id+`">Delete</div>`;
 			let colActions = (divID == "tblSheetsBody" ? htmlBtnOpen + htmlBtnDelete + htmlBtnExport : "n/a");
 			if(divID = "tblSheetsBody" ){
+				let isDefault = sheet.createdBy == devName;
+				let classDefault = isDefault ? " "+classDefaultSheet+" " : "";
 				let sheetID = id;
 				let row = 
-						`<tr id="tblSheet`+sheetID+`" data-index="`+sheetID+`" class="tbl-row text-center">
+						`<tr id="tblSheet`+sheetID+`" data-index="`+sheetID+`" class="tbl-row text-center `+classDefault+`">
 							<td id="tblSheetName`+sheetID+`">`+sheet.name+`</td>
 							<td id="tblSheetDescription`+sheetID+`">`+sheet.description+`</td>
 							<td id="tblSheetCreatedBy`+sheetID+`">`+sheet.createdBy+`</td>
@@ -750,6 +757,7 @@
 
 		// Set up Defaults variables 
 		var arrDefaultSheets = [];
+		var arrDefaultSheetNames = [];
 		var arrDefaultBlockTemplates = [];
 		function FindInDefaults(action, findName){
 			let arrTemp = (action == actionCharSheet ? arrDefaultSheets 
@@ -2042,6 +2050,17 @@
 					this.innerHTML = btnPostText;
 				}
 			}
+			document.getElementById("tblSheetsDefaultToggle").onclick = function() {
+				let btnPostText = "Default Sheets";
+				if(this.innerHTML == "Hide "+btnPostText){
+					DisplayByClass(classDefaultSheet, "none");
+					this.innerHTML = "Show "+btnPostText;
+				}else{
+					UpdateTable();
+					//DisplayByClass(classDefaultSheet, "block");
+					this.innerHTML = "Hide "+btnPostText;
+				}
+			}
 			document.getElementById("btnSheetsImport").onclick = function() {
 				//Eventualy implement ImportFromExportString
 				UpdateClassStringInArray(actionCharSheet, document.getElementById("importClassString").value);
@@ -2053,6 +2072,15 @@
 				arrTemplateImports[i].onclick = function() {
 					DisplayExportString(this.getAttribute("data-sheet"), true);
 				}
+			}
+			document.getElementById("btnUpdateTemplates").onclick = function() {
+				let origSetToggleExportAlert = setToggleExportAlert;
+				setToggleExportAlert = null;
+				for(let i = 0; i < arrDefaultSheetNames.length; i++) {
+					UpdateClassStringInArray(actionCharSheet, arrDefaultSheets[i], true);
+				}
+				setToggleExportAlert = origSetToggleExportAlert;
+				alert("Update complete!");
 			}
 			
 			//Danger 
@@ -2332,6 +2360,7 @@
 		window.onload = function() {
 			
 			//Set Defaults
+			arrDefaultSheetNames = ["Tutorial", "Template: Daggerheart", "Shit guide to Trench Crusade"];
 			arrDefaultSheets = [
 `Tutorial!c!ShitCode!c!Here is a sheet where I teach you all the things you can do with ABCC. <br>
 TLDR. Just play around. I'm sure you'll get it.!c!1!c!!S!!b!2!b!First you should look around the edges of the screen. <br><br>
@@ -2620,7 +2649,7 @@ Feel free to format this guide however you like. If you see an error shoot an em
     <ul>
       <li><strong>COVER</strong>: An attacking unit gains <strong>-1 DICE</strong> if the target is touching and partially behind a non unit model that is at least as thick as the target's base.</li>
       <li><strong>Long Range</strong>: An attacking unit gains <strong>-1 DICE</strong> if the target is more than half your weapons max Range.</li>
-      <li><strong>Elevation</strong>: An attacking unit gains <strong>-1 DICE</strong> if it is higher than 2" from the target's base. If attacking unit's base is at least 50mm then it must be 4" or higher.</li>
+      <li><strong>Elevation</strong>: An attacking unit gains <strong>+1 DICE</strong> if it is higher than 2" from the target's base. If attacking unit's base is at least 50mm then it must be 4" or higher.</li>
     </ul>
   </li>
 </ul>!b!22!b!100%!b!none!b!1!b!left!b!0!b!)!b!(!b!23!b!100%!b!solid!b!0!b!!S!!b!2!b!<strong style="font-size: 1.25rem;">MELEE ATTACK</strong>
