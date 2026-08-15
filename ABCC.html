@@ -1,5 +1,5 @@
 <!-- Hi. If you're reading this then I will assume you know the basic shit already. -->
-<!-- ao20250926: Button for toggling default sheets' rows and updating all default sheets. Hotfix for Trench Crusade Ranged Attack Elevation typo. -->
+<!-- ao20260814: Button for toggling block type, from static to dynamic and vice versa. General changes to how Block type is stored and accessed. -->
 <!DOCTYPE html>
 <html class="dark">
 <head>
@@ -70,9 +70,6 @@
 			color: #000 !important;
 			background-color: #FFF !important;
 		}
-		.btn-block-new-form{
-			padding: .1rem .5rem;
-		}
 		.form-control{
 			background: #333;
 			color: #bbb;
@@ -103,14 +100,7 @@
 		}
 		.btn-block-new-form{/*.form-new-block*/
 			margin-top: .251rem;
-		}
-		@media screen and (max-width: 1111px) {
-			.dr-stuck{
-				min-width: calc(100vw - 2px) !important;
-			}
-			.sheet{
-				width: auto !important;
-			}
+			padding: .1rem .5rem;
 		}
 	</style>
 
@@ -178,6 +168,14 @@
 		.tbl-sheets-header{
 			padding: .5rem;
 			border: 1px solid #FFF;
+		}
+		@media screen and (max-width: 1111px) {
+			.dr-stuck{
+				min-width: calc(100vw - 2px) !important;
+			}
+			.sheet{
+				width: auto !important;
+			}
 		}
 
 	</style>
@@ -263,12 +261,20 @@
 		}
 	</style>
 
+	<!-- ABCC -->
+	<style>
+		.btn-block-new-form{/*.form-new-block*/
+			margin-top: .251rem;
+			padding: .1rem .5rem;
+		}
+	</style>
+
 	<!-- title -->
 	<style>
 	</style>
 </head>
 <body>	
-	<div style="min-height: 100%; min-width: 100%; ">
+	<div id="sectionTabs" style="min-height: 100%; min-width: 100%; ">
 		<div style="width: 100%;">
 			<div id="topbar" style="width: 100%; position: fixed;">
 				<div id="divTabs" style="padding: .25rem 0 0 .25rem;">
@@ -290,7 +296,7 @@
 			</div>
 			<div id="sheet0" class="sheet" style="padding-bottom: 2rem;">
 				<h1 style="margin-bottom: 0;">A Budget Character Creator</h1>
-				v0.1.2.1
+				v0.1.2.2
 				<h6 style="margin: 0;">By: TIHS_CODE</h6>
 				<h6 style="margin: 0;"><a href="https://tihs-code.neocities.org/" target="_blank" class="btn" style="color: inherit;">Check out my other projects</a></h6>
 				<p>
@@ -1091,7 +1097,7 @@
 
 
 
-		//For Advanced Tool of block pointers
+		//For Advanced Tool of block pointers(ex. the thing in D&D 5e where ([Ability Score] - 10) / 2 = Ability Modifier. The block pointer being where [Ability Score] is located)
 		function GetBlockEditTextPreview(textPreview, sheetID){
 			//Check for Pointers
 			let arrApplyText = SplitTrim(textPreview, ''); //ConLog("arrApplyText: "+arrApplyText);
@@ -1131,19 +1137,18 @@
 		}
 		function GetBlockDivID(element){
 			let sheetID = element.getAttribute("data-sheetID");
-			let blockType = "block"; //element.getAttribute("data-blockType");
-			let blockTypeID = (blockType == "block" ? "b" 
-							: (blockType == "group" ? "g" 
-							: (blockType == "stat" ? "s" 
-							: null)));
 			let blockID = element.getAttribute("data-blockID");
-			return "s"+sheetID+blockTypeID+blockID;
+			return "s"+sheetID+"b"+blockID;
+		}
+		function GetBlockType(blockDivID){
+			let inputBlockType = document.getElementById(blockDivID+"TypeEdit");
+			return inputBlockType ? inputBlockType.value : "G";
 		}
 		//Update the value in a Block
 		function UpdateSheetBlock(blockDiv){
 			let sheetID = blockDiv.getAttribute("data-sheetID"); 
-			let blockType = blockDiv.getAttribute("data-blockType"); 
 			let blockDivID = GetBlockDivID(blockDiv); 
+			let blockType = GetBlockType(blockDivID);
 
 			if(blockType == "0" || blockType == "2"){ 
 				//If Static Block, then apply the Placeholder value
@@ -1179,7 +1184,6 @@
 
 			//Variables for Re-Save / Advanced Tools 
 			let targetSaveBlockDivID = saveType == null ? null : GetBlockDivID(thisBtn);
-			let targetSaveBlockType = saveType == null ? null : thisBtn.getAttribute("data-blockType"); //ConLog("targetSaveBlockType: "+targetSaveBlockType);
 			let targetSaveBlockID = saveType == null ? null : thisBtn.getAttribute("data-blockID");
 
 			let stringSaveFinal = "";
@@ -1294,7 +1298,7 @@
 							//If current Block is the end of the target Block then remember the ForMove details
 							if(exportBlockID == targetSaveBlockID){
 								sbidForMove = exportBlockID; //ConLog("sbidForMove: "+sbidForMove);
-								blockTypeForMove = arrStats[s].getAttribute("data-blockType"); 
+								blockTypeForMove = GetBlockType(GetBlockDivID(arrStats[s]));
 								isStringSaveForAppend = true;
 								isStringForDupe = false;
 								isStringForMove = false;
@@ -1774,9 +1778,9 @@
 				}
 				outerHTML += 
 					"		<div id=\""+newBlockID+"EditTopBtns\" class=\"btn-block-edit-top-btns\" data-sheetID=\""+sheetID+"\">"
-					+"			<div id=\""+newBlockID+"Edit\" class=\"btn btn-block-edit\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" style=\"float: left; display: block;\">Edit</div>"
+					+"			<div id=\""+newBlockID+"Edit\" class=\"btn btn-block-edit\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" style=\"float: left; display: block;\">Edit</div>"
 					+"			<span class=\"mb-2\" style=\"margin: auto;\">&nbsp</span>"
-					+"			<div id=\""+newBlockID+"Remove\" class=\"btn btn-block-remove\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" style=\"float: right; display: none;\">Remove</div>"
+					+"			<div id=\""+newBlockID+"Remove\" class=\"btn btn-block-remove\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" style=\"float: right; display: none;\">Remove</div>"
 					+"		</div>"
 					+"		<div id=\""+newBlockID+"EditForm\" class=\"sheet-block w100 div-block-edit\" data-sheetID=\""+sheetID+"\" style=\"display: none;\">"
 					+"			<div class=\"sheet-block w100 border\" style=\" min-width: 300px;\">"
@@ -1787,14 +1791,18 @@
 									+CreateSelectBlockEdit(sheetID, newBlockID, "Border")
 									+CreateSelectBlockEdit(sheetID, newBlockID, "Togglable");
 				}else{
+					let tempDisplay = (blockType == 1 || blockType == 3) ? ` style="display: none;"` : "";//Hide Placeholder if Dynamic Block
+					outerHTML += (blockType == 0 || blockType == 1)//Static or Dynamic Number
+							?	"	<input id=\""+newBlockID+"TextPlaceholder\" class=\"form-control\" data-sheetID=\""+sheetID+"\" title=\"Block Value\" placeholder=\"Block Value\" type=\"number\""+tempDisplay+" />"  : "";
+					outerHTML += (blockType == 2 || blockType == 3)//Static or Dynamic Text
+							?	"	<textarea id=\""+newBlockID+"TextPlaceholder\" class=\"form-control\" data-sheetID=\""+sheetID+"\" title=\"Block Text\" placeholder=\"Block Text\" rows=\"4\""+tempDisplay+"></textarea>" : "";
+
+					outerHTML += "	<div id=\""+newBlockID+"TextEditInner\"><span></span>";
 					outerHTML += (blockType == 0)//Static Number
-							?	"	<input id=\""+newBlockID+"TextPlaceholder\" class=\"form-control\" data-sheetID=\""+sheetID+"\" title=\"Block Value\" placeholder=\"Block Value\" type=\"number\" />" 
-								+"	<input id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-editType=\"text\" data-sbid=\""+sbid+"\" hidden/>" 
-							: "";
+							?	"		<input id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-editType=\"text\" data-sbid=\""+sbid+"\" hidden/>" : "";
 					outerHTML += (blockType == 2)//Static Text
-							?	"	<textarea id=\""+newBlockID+"TextPlaceholder\" class=\"form-control\" data-sheetID=\""+sheetID+"\" title=\"Block Text\" placeholder=\"Block Text\" rows=\"4\"></textarea>" 
-								+"	<textarea id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-editType=\"text\" data-sbid=\""+sbid+"\" hidden></textarea>"
-							: "";
+							?	 "		<textarea id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-editType=\"text\" data-sbid=\""+sbid+"\" hidden></textarea>" : "";
+					outerHTML += "	</div>";
 					outerHTML += 
 					"				<input id=\""+newBlockID+"SbidEdit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" title=\"Sheet Block ID.\" placeholder=\"Sheet Block ID.\" type=\"number\" value=\""+sbid+"\"/>"
 									+CreateSelectBlockEdit(sheetID, newBlockID, "Width")
@@ -1803,16 +1811,19 @@
 									+CreateSelectBlockEdit(sheetID, newBlockID, "Align")
 									+CreateSelectBlockEdit(sheetID, newBlockID, "Togglable");
 				}
+				let tempButton = (blockType == "G") ? "" //Group Blocks does not have the Toggle Type button
+					: "<div class=\"btn btn-block-tgl-type\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>Toggle Type</div>";
 				outerHTML += 
 					"			</div>"
 					+"			<div>"
-					+"				<div id=\""+newBlockID+"Apply\" class=\"btn btn-block-apply\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\">Apply</div>"
+					+"				<div id=\""+newBlockID+"Apply\" class=\"btn btn-block-apply\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\">Apply</div>"
 					+"				<div style=\"float: right;\">"
-					+"					<div class=\"btn btn-block-duplicate\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>Duplicate</div>"
-					+"					<div class=\"btn btn-block-move-left-group\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>&lt&lt</div>"
-					+"					<div class=\"btn btn-block-move-left\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>&lt</div>"
-					+"					<div class=\"btn btn-block-move-right\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>&gt</div>"
-					+"					<div class=\"btn btn-block-move-right-group\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\" hidden>&gt&gt</div>"
+					+"					"+tempButton
+					+"					<div class=\"btn btn-block-duplicate\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>Duplicate</div>"
+					+"					<div class=\"btn btn-block-move-left-group\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>&lt&lt</div>"
+					+"					<div class=\"btn btn-block-move-left\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>&lt</div>"
+					+"					<div class=\"btn btn-block-move-right\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>&gt</div>"
+					+"					<div class=\"btn btn-block-move-right-group\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>&gt&gt</div>"
 					+"				</div>"
 					+"			</div>"
 					+"		</div>";
@@ -1825,7 +1836,7 @@
 					+"		<div class=\"sheet-export\" data-export=\")\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\"></div>";//groupEnd
 				}
 				outerHTML += 
-					"		<div class=\"sheet-export\" data-export=\"BLOCKEND\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-blockType=\""+blockType+"\"></div>"
+					"		<div class=\"sheet-export\" data-export=\"BLOCKEND\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\"></div>"
 					+"	</div>"
 						+CreateNewForm(newBlockID+"End", sheetID)
 					+"</div>"
@@ -1936,7 +1947,7 @@
 			for(let i = 0; i < arrBlockApply.length; i++) {
 				arrBlockApply[i].onclick = function() {
 					let blockDivID = GetBlockDivID(this);
-					let blockType = this.getAttribute("data-blockType"); 
+					let blockType = GetBlockType(blockDivID);
 
 					//Apply each Block Detail
 					let applyWidth = document.getElementById(blockDivID+"WidthEdit").value;
@@ -1961,10 +1972,44 @@
 					BorderByClass("sheet-container", "dashed", sheetID, "none");
 				}
 			}
+			let arrBlockToggleType = document.getElementsByClassName("btn-block-tgl-type");
+			for(let i = 0; i < arrBlockToggleType.length; i++) {
+				arrBlockToggleType[i].onclick = function() {
+					let blockDivID = GetBlockDivID(this);
+					let blockType = GetBlockType(blockDivID);
+					if(blockType != "G"){
+						document.getElementById(blockDivID+"TypeEdit").value = 
+							blockType == 0 ? 1 //Static Number to Dynamic
+							: (blockType == 1 ? 0 //Dynamic Number to Static
+							: (blockType == 2 ? 3 //Static Text to Dynamic
+							: (blockType == 3 ? 2 //Dynamic Text to Static
+							: document.getElementById(blockDivID+"TypeEdit").value)));
+
+						let divStart = document.getElementById(blockDivID+"Start");
+						let divTextEditInner = document.getElementById(blockDivID+"TextEditInner");
+						let objHTMLTextEdit = document.getElementById(blockDivID+"TextEdit");
+
+						if(blockType == 0 || blockType == 2){//If Static to Dynamic
+							divStart.innerHTML = '';//Clear Start BEFORE append input
+							divStart.append(objHTMLTextEdit);
+							divTextEditInner.innerHTML = '';
+							DisplayById(blockDivID+"TextPlaceholder", "none");
+							DisplayById(blockDivID+"TextEdit", "block");
+						} else if(blockType == 1 || blockType == 3){//If Dynamic to Static
+							divTextEditInner.append(objHTMLTextEdit);
+							document.getElementById(blockDivID+"TextPlaceholder").value = objHTMLTextEdit.value;
+							DisplayById(blockDivID+"TextPlaceholder", "block");
+							DisplayById(blockDivID+"TextEdit", "none");
+						}
+						UpdateSheetBlock(this);
+					}
+					document.getElementById(blockDivID+"Edit").click();
+				}
+			}
 			SetBlockEditButtonsResaves();
 		}
 			
-			//Tabs					
+		//Tabs					
 		function OnloadForTabs(){
 			let tabHome = document.getElementById("tabHome");
 
@@ -2025,11 +2070,6 @@
 					}
 					btnEditBlocks.click();
 				}
-			}
-			//Save Sheet
-			document.getElementById("btnTabSaveSheet").onclick = function() {
-				ConLog("btnTabSaveSheet");
-				OpenTab();
 			}
 
 			SetSheetButtons();
