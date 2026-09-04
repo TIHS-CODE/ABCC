@@ -1,5 +1,5 @@
 <!-- Hi. If you're reading this then I will assume you know the basic shit already. -->
-<!-- ao20260814: Button for toggling block type, from static to dynamic and vice versa. General changes to how Block type is stored and accessed. -->
+<!-- ao20260904: Update for Sticky Edit window, Advanced buttons. -->
 <!DOCTYPE html>
 <html class="dark">
 <head>
@@ -182,24 +182,31 @@
 
 	<!-- Dice Roller -->
 	<style>
-		#headDiceRoller{
+		.sticky-head{
 			border-style: solid; 
 			border-width: 1px; 
 			border-top-left-radius: .75rem; 
 			border-top-right-radius: .75rem; 
 			padding: .25rem; 
 			min-height: calc(1.5rem + 2px);
+			margin-top: auto;
+			background-color: var(--color-sheet-back);
+			pointer-events: all;
 		}
-		#bodyDiceRoller{
+		.sticky-body{
 			border: 1px solid; 
 			border-top-style: none; 
 			padding: .5rem;
+			background-color: var(--color-sheet-back);
+			pointer-events: all;
 		}
 		.dr-stuck {
-			position: fixed;
-   			bottom: 1px;
-   			right: 1px;
 			max-width: 33vw;
+		}
+		.div-sticky{
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
 		}
 	</style>
 
@@ -296,7 +303,7 @@
 			</div>
 			<div id="sheet0" class="sheet" style="padding-bottom: 2rem;">
 				<h1 style="margin-bottom: 0;">A Budget Character Creator</h1>
-				v0.1.2.2
+				v0.1.2.3
 				<h6 style="margin: 0;">By: TIHS_CODE</h6>
 				<h6 style="margin: 0;"><a href="https://tihs-code.neocities.org/" target="_blank" class="btn" style="color: inherit;">Check out my other projects</a></h6>
 				<p>
@@ -336,32 +343,51 @@
 					</div>
 				</div>
 				
-				<div id="homeDiceRoller" class="mt-2 mb-3">
-					<div id="divDiceRoller" style="background-color: var(--color-sheet-back);">
-						<div id="headDiceRoller">
-							<strong style="font-size: 1.1rem; margin-right: .5rem;">Dice Roller</strong>
-							<div style="float: right;">
-								<div id="btnDiceRollerSticky" class="btn">Sticky</div>
-								<div id="btnDiceRollerMin" class="btn">Minimize</div>
-							</div>
-						</div>
-						<div id="bodyDiceRoller">
-							Input dice command:
-							<input id="txtDiceRoller" class="form-control" onkeydown="CheckRollDice(this)" placeholder="Number of Dice + d + Number of Dice's sides " style="margin: .1rem 0;"/>
-							Quick Dice:
-							<div class="btn q-dice">d20</div>
-							<div class="btn q-dice">d100</div>
-							<div class="btn q-dice">2d12</div>
-							<div class="btn q-dice">2d6</div>
-							<div class="btn q-dice">3d6</div>
-							<div class="btn q-dice">4d6</div>
-							<div class="btn q-dice">8d6</div>
-							<div class="" style="width: 100%; text-align: center; color: #ddd;">
-								<span id="tglDiceRollLog" class="btn" style="color: #eee">Dice Roll Log: </span>
-								<div id="divDiceRollLog" class="col-12" style="max-height: 33vh; overflow-y:auto; margin-top: 2px; padding: 2px; border: 1px solid;">
-									<div id="endDiceRollLog"></div>
+				<div id="homeDiceRoller" class="mt-2 mb-3" style="pointer-events: none">
+					<div id="divDiceRoller" class="div-sticky">
+							<div id="headDiceRoller" class="sticky-head">
+								<strong style="font-size: 1.1rem; margin-right: .5rem;">Dice Roller</strong>
+								<div style="float: right;">
+									<div id="btnDiceRollerSticky" class="btn btn-tgl-sticky" data-target="divDiceRoller">Sticky</div>
+									<div id="btnDiceRollerMin" class="btn btn-tgl-sticky-display" data-target="bodyDiceRoller">Minimize</div>
 								</div>
 							</div>
+							<div id="bodyDiceRoller" class="sticky-body">
+								Input dice command:
+								<input id="txtDiceRoller" class="form-control" onkeydown="CheckRollDice(this)" placeholder="Number of Dice + d + Number of Dice's sides " style="margin: .1rem 0;"/>
+								Quick Dice:
+								<div class="btn q-dice">d20</div>
+								<div class="btn q-dice">d100</div>
+								<div class="btn q-dice">2d12</div>
+								<div class="btn q-dice">2d6</div>
+								<div class="btn q-dice">3d6</div>
+								<div class="btn q-dice">4d6</div>
+								<div class="btn q-dice">8d6</div>
+								<div class="" style="width: 100%; text-align: center; color: #ddd;">
+									<span id="tglDiceRollLog" class="btn" style="color: #eee">Dice Roll Log: </span>
+									<div id="divDiceRollLog" class="col-12" style="max-height: 33vh; overflow-y:auto; margin-top: 2px; padding: 2px; border: 1px solid;">
+										<div id="endDiceRollLog"></div>
+									</div>
+								</div>
+							</div>
+					</div>
+				</div>
+				
+				<div id="homeFixedEditForm" class="mt-2 mb-3" style="pointer-events: none">
+					<div id="divFixedEditForm" class="div-sticky">
+						<div id="headFixedEditForm" class="sticky-head">
+							<strong style="font-size: 1.1rem; margin-right: .5rem;">Edit Form</strong>
+							<div style="float: right;">
+								<div id="btnFixedEditFormSticky" class="btn btn-tgl-sticky" data-target="divFixedEditForm">Sticky</div>
+								<div id="btnFixedEditFormMin" class="btn btn-tgl-sticky-display" data-target="bodyFixedEditForm">Minimize</div>
+							</div>
+						</div>
+						<div id="bodyFixedEditForm" class="sticky-body">
+							<div id="containerFixedEditForm">
+								When editing a block you can stick this window to the bottom right and edit from here!
+							</div>
+							<br>
+							<i>Remember to set "Edit using Sticky Window" ON.</i>
 						</div>
 					</div>
 				</div>
@@ -419,7 +445,7 @@
 			<div id="endSheets"></div>
 			<br>
 		</div>
-		<div id="footer"></div>
+		<div id="footer" style="display: flex; justify-content: flex-end; width: 100%; position: fixed; bottom: 1px; pointer-events: none;"></div>
 	</div>
 	<script>
 		// === === === General Functions 1 === === === =====================================================================================================================================================================================================
@@ -510,7 +536,7 @@
 		var userDataName = "User";//devName//
 		var userSaveNotif = "0"; // 0 = Show all, 1 = show none, 2 = do not show overwrite
 		var userResaveWarning = "0"; // 0 = Show all, 1 = show none
-		ConLog("defaults, userResaveWarning: "+userResaveWarning);
+		//ConLog("defaults, userResaveWarning: "+userResaveWarning);
 		const devName = "ShitCode";
 		const storageUserData = "tihs-2025-abcc-storageUserData";
 		const defaultUserDataString = userDataName+","+userSaveNotif;
@@ -529,7 +555,7 @@
 		function LoadUserData(override = null){ 
 			let storageString = localStorage.getItem(storageUserData); 
 			storageString = override != null ? override
-				: (storageString ? storageString : defaultUserDataString) ;
+				: (storageString ? storageString : defaultUserDataString);
 			let storageStringSplit = SplitTrim(storageString); //ConLog(storageUserData+", storageString: "+storageString, true);
 			let sMax = storageStringSplit.length;
 			let s = 0;
@@ -601,6 +627,11 @@
 		var currentBlockID = 9;
 		var currentTab = 0;
 		var currentTabOpenCount = 0;
+
+		//Setup StickyEditForm
+		var currStickyEditTargetSheetID = null;
+		var currStickyEditTargetBlockID = null;
+		var currStickyEditTargetBlockType = null;
 
 		//Helpers for Class Object specific data
 		function GetActionArray(action){ 
@@ -1378,17 +1409,63 @@
 				BorderByClass("sheet-container", "dashed", sheetID, "none");
 			}
 		}
+		
+		function ClearStickyEditForm(){
+			//Reset previous Edit Target
+			let prevBlockEdit = document.getElementById("s"+currStickyEditTargetSheetID+"b"+currStickyEditTargetBlockID+"Edit");
+			if(prevBlockEdit) prevBlockEdit.innerHTML = "Edit";
+
+			currStickyEditTargetSheetID = null;
+			currStickyEditTargetBlockID = null;
+			currStickyEditTargetBlockType = null;
+
+			//Clear Sticky Edit inputs
+			let preTextStickyEdit = "stickyEdit";
+			DisplayById(preTextStickyEdit+"TextPlaceholder", "block");
+			DisplayById(preTextStickyEdit+"FontSizeEdit", "block");
+			DisplayById(preTextStickyEdit+"AlignEdit", "block");
+			document.getElementById(preTextStickyEdit+"SbidEdit").value = "";
+			document.getElementById(preTextStickyEdit+"WidthEdit").value = "fit-content";
+			document.getElementById(preTextStickyEdit+"BorderEdit").value = "none";
+			document.getElementById(preTextStickyEdit+"TextPlaceholder").value = "";
+			document.getElementById(preTextStickyEdit+"FontSizeEdit").value = "";
+			document.getElementById(preTextStickyEdit+"AlignEdit").value = "left";
+
+			document.getElementById("stickyEditFormHeader").innerHTML = "Editing nothing";
+		}
+		
 		function SetSheetButtons(){
+			let arrSheetSave = document.getElementsByClassName("btn-sheet-save");
+			for(let i = 0; i < arrSheetSave.length; i++) {
+				arrSheetSave[i].onclick = function() {
+					SetOnClickSheetSave();
+				}
+			}
 			let arrSheetEdit = document.getElementsByClassName("btn-sheet-edit");
 			for(let i = 0; i < arrSheetEdit.length; i++) {
 				arrSheetEdit[i].onclick = function() {
 					SetOnClickSheetEdit(this);
 				}
 			}
-			let arrSheetSave = document.getElementsByClassName("btn-sheet-save");
-			for(let i = 0; i < arrSheetSave.length; i++) {
-				arrSheetSave[i].onclick = function() {
-					SetOnClickSheetSave();
+			let arrStickyEdit = document.getElementsByClassName("btn-sticky-edit");
+			for(let i = 0; i < arrStickyEdit.length; i++) {
+				arrStickyEdit[i].onclick = function() {
+					let sheetID = this.getAttribute("data-sheetID"); 
+					let btnPreText = "Toggle Edit using Sticky Window: ";
+					this.innerHTML = this.innerHTML == btnPreText+"ON" ? btnPreText+"OFF" : btnPreText+"ON";
+					let isBtnON = this.innerHTML == btnPreText+"ON"
+
+					//Toggle the edit window if it isnt already
+					let btnFixedEditFormSticky = document.getElementById("btnFixedEditFormSticky");
+					let btnFixedEditFormMin = document.getElementById("btnFixedEditFormMin");
+					if((isBtnON && btnFixedEditFormSticky.innerHTML == "Sticky") || (!isBtnON && btnFixedEditFormSticky.innerHTML == "Unstuck"))
+						btnFixedEditFormSticky.click();
+					if((isBtnON && btnFixedEditFormMin.innerHTML == "Open") || (!isBtnON && btnFixedEditFormMin.innerHTML == "Minimize"))
+						btnFixedEditFormMin.click();
+
+					if(!isBtnON){
+						ClearStickyEditForm();
+					}
 				}
 			}
 		}
@@ -1598,6 +1675,7 @@
 				
 				+"		<input id=\""+idNewSheet+"SbidCount\" class=\"form-control\" type=\"number\" value=\"1\"/>"
 				+"		<div id=\""+idNewSheet+"EditBlocks\" class=\"btn btn-sheet-edit\" data-sheetID=\""+sheetIdCount+"\" hidden>Toggle Sheet Block Edit: ON</div>"
+				+"		<div id=\""+idNewSheet+"EditStickyMode\" class=\"btn btn-sticky-edit\" data-sheetID=\""+sheetIdCount+"\" hidden>Toggle Edit using Sticky Window: OFF</div>"
 				//+"		<div class=\"btn btn-sheet-save\" data-sheetID=\""+sheetIdCount+"\">Save Sheet</div>"
 				+"	</div>"
 				+	GetSheetBody(sheetIdCount)
@@ -1625,7 +1703,7 @@
 			}
 		}
 		function DisplayExportString(sheetName, isDefaultSheet = false){
-			let sheetForExport = isDefaultSheet ? arrDefaultSheets[sheetName] : FindInActionArray(actionCharSheet, sheetName); ConLog("sheetName: "); ConLog(sheetName);
+			let sheetForExport = isDefaultSheet ? arrDefaultSheets[sheetName] : FindInActionArray(actionCharSheet, sheetName); //ConLog("sheetName: "); ConLog(sheetName);
 			document.getElementById("importClassString").value = isDefaultSheet ? sheetForExport : sheetForExport.DetailsToString();
 			let ioDisplay = document.getElementById("tblSheetsImport");
 			if(ioDisplay.innerHTML != "Import/Export") ioDisplay.click();
@@ -1737,6 +1815,173 @@
 			return htmlSelect;
 		}
 
+		//Create Block Edit Form
+		function CreateBlockEditForm(target, blockType, sheetID = 0, blockID = 0){
+			let isStickyEditForm = blockType == "isStickyEditForm";
+			blockType = isStickyEditForm ? 2 : blockType;//If isStickyEditForm use Static Text for form inputs
+
+			//Set Sheet Block ID Count
+			let sheetBlockIDEditInput = document.getElementById("sheet"+sheetID+"SbidCount");
+			let sbid = isStickyEditForm ? 0 : sheetBlockIDEditInput.value;
+			if(!isStickyEditForm)
+				sheetBlockIDEditInput.value = (sbid * 1) + 1;
+
+			//Set Block details
+			let containerMargin = 		blockType == "G" ? "" : " m-1 ";
+			let bodyClass = 			blockType == "G" ? "sheet-block w100" : " div-block-body ";
+			let editStart = 			blockType == "G" ? "(" : actionStat;
+			let editContainerWidth = 	blockType == "G" ? "100%" : "calc(100% - .5rem)";
+			let editBorder = 			blockType == "G" ? "solid" : "none"; 
+			let newBlockID = isStickyEditForm ? "stickyEdit" : "s"+sheetID+"b"+blockID;
+
+			let outerHTML = isStickyEditForm ? "" 
+				:`<div id="`+target+`"></div>
+				<div id="`+newBlockID+`" class="sheet-block sheet-export" data-export="`+editStart+`" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" style="width: 100%;">`;
+			outerHTML += 
+				`	<!-- Block `+blockID+` -->
+					<div id="`+newBlockID+`Container" class="sheet-container sheet-block border `+containerMargin+`" data-sheetID="`+sheetID+`" style="border-style: `+editBorder+` !important; width: `+editContainerWidth+`; overflow:auto;">`;
+			if(blockType != "G"){ 
+				outerHTML += 
+				`		<div id="`+newBlockID+`Body" class="`+bodyClass+`" data-sheetID="`+sheetID+`">
+							<input id="`+newBlockID+`TypeEdit" class="form-control sheet-export" data-export="val" data-sheetID="`+sheetID+`" value="`+blockType+`" hidden/>
+							<div id="`+newBlockID+`Start">`;
+				outerHTML += (blockType == 1)//Dynamic Number
+						?	`	<input id="`+newBlockID+`TextEdit" class="form-control sheet-export text-edit" data-export="val" data-sheetID="`+sheetID+`" data-sbid="`+sbid+`" title="Block Value" placeholder="Block Value" type="number"/>` : "";
+				outerHTML += (blockType == 3)//Dynamic Text
+						?	`	<textarea id="`+newBlockID+`TextEdit" class="form-control sheet-export text-edit" data-export="val" data-sheetID="`+sheetID+`" data-sbid="`+sbid+`" title="Block Text" placeholder="Block Text"  rows="4"></textarea>` : "";
+				outerHTML += 
+				`			</div>
+						</div>`;
+			}
+			let attrStickyEditForm = isStickyEditForm ? `btn-sticky-edit-form" data-target="` : ``;
+			let objFormHeader = isStickyEditForm ? `<span id="`+newBlockID+`FormHeader">Editing Nothing</span>` // `<span class="mb-2" style="margin: auto;">&nbsp</span>`
+				: `<div id="`+newBlockID+`Edit" class="btn btn-block-edit" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" style="float: left; display: block;">Edit</div>`; 
+			outerHTML += 
+				`		<div id="`+newBlockID+`EditTopBtns" class="btn-block-edit-top-btns" data-sheetID="`+sheetID+`">
+							`+objFormHeader+`
+							<div id="`+newBlockID+`Remove" class="btn `+attrStickyEditForm+`btn-block-remove" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" style="float: right; display: none;">Remove</div>
+						</div>
+						<div id="`+newBlockID+`EditForm" class="sheet-block w100 div-block-edit" data-sheetID="`+sheetID+`" style="display: none;">
+							<div class="sheet-block w100 border" style=" min-width: 300px;">`;
+			if(blockType == "G"){
+				outerHTML += 
+				`				<input id="`+newBlockID+`SbidEdit" class="form-control sheet-export" data-export="val" data-sheetID="`+sheetID+`" title="Sheet Block ID." placeholder="Sheet Block ID." type="number" value="`+sbid+`"/>`
+								+CreateSelectBlockEdit(sheetID, newBlockID, "Width")
+								+CreateSelectBlockEdit(sheetID, newBlockID, "Border")
+								+CreateSelectBlockEdit(sheetID, newBlockID, "Togglable");
+			}else{
+				let tempDisplay = (blockType == 1 || blockType == 3) ? ` style="display: none;"` : "";//Hide Placeholder if Dynamic Block
+				outerHTML += (blockType == 0 || blockType == 1)//Static or Dynamic Number
+						?	`	<input id="`+newBlockID+`TextPlaceholder" class="form-control" data-sheetID="`+sheetID+`" title="Block Value" placeholder="Block Value" type="number"`+tempDisplay+` />`  : "";
+				outerHTML += (blockType == 2 || blockType == 3)//Static or Dynamic Text
+						?	`	<textarea id="`+newBlockID+`TextPlaceholder" class="form-control" data-sheetID="`+sheetID+`" title="Block Text" placeholder="Block Text" rows="4"`+tempDisplay+`></textarea>` : "";
+
+				outerHTML += `	<div id="`+newBlockID+`TextEditInner"><span></span>`;
+				outerHTML += (blockType == 0)//Static Number
+						?	`		<input id="`+newBlockID+`TextEdit" class="form-control sheet-export text-edit" data-export="val" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" data-editType="text" data-sbid="`+sbid+`" hidden/>` : "";
+				outerHTML += (blockType == 2)//Static Text
+						?	`		<textarea id="`+newBlockID+`TextEdit" class="form-control sheet-export text-edit" data-export="val" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" data-editType="text" data-sbid="`+sbid+`" hidden></textarea>` : "";
+				outerHTML += `	</div>`;
+				outerHTML += 
+				`				<input id="`+newBlockID+`SbidEdit" class="form-control sheet-export" data-export="val" data-sheetID="`+sheetID+`" title="Sheet Block ID." placeholder="Sheet Block ID." type="number" value="`+sbid+`"/>`
+								+CreateSelectBlockEdit(sheetID, newBlockID, "Width")
+								+CreateSelectBlockEdit(sheetID, newBlockID, "Border")
+				+`				<input id="`+newBlockID+`FontSizeEdit" class="form-control sheet-export" data-export="val" data-sheetID="`+sheetID+`" data-editType="fontSize" title="Block Font Size, by rem. Default 1." placeholder="Stat Font Size, by rem. Default 1." type="number"/>`
+								+CreateSelectBlockEdit(sheetID, newBlockID, "Align")
+								+CreateSelectBlockEdit(sheetID, newBlockID, "Togglable");
+			}
+			let toDoStickyEditAdvBtns = isStickyEditForm ? `` : ``;// display: none;
+			let tempBtnTglType = (blockType == "G") ? "" //Group Blocks does not have the Toggle Type button
+				: `<div id="`+newBlockID+`TglType" class="btn `+attrStickyEditForm+`btn-block-tgl-type" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" hidden>Toggle Type</div>`;
+			outerHTML += 
+				`			</div>
+							<div>
+								<div id="`+newBlockID+`Apply" class="btn `+attrStickyEditForm+`btn-block-apply" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`">Apply</div>
+								<div style="float: right;`+toDoStickyEditAdvBtns+`">
+									`+tempBtnTglType+`
+									<div id="`+newBlockID+`Dupe" class="btn `+attrStickyEditForm+`btn-block-duplicate" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" hidden>Duplicate</div>
+									<div id="`+newBlockID+`MoveLG" class="btn `+attrStickyEditForm+`btn-block-move-left-group" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" hidden>&lt&lt</div>
+									<div id="`+newBlockID+`MoveL" class="btn `+attrStickyEditForm+`btn-block-move-left" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" hidden>&lt</div>
+									<div id="`+newBlockID+`MoveR" class="btn `+attrStickyEditForm+`btn-block-move-right" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" hidden>&gt</div>
+									<div id="`+newBlockID+`MoveRG" class="btn `+attrStickyEditForm+`btn-block-move-right-group" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`" hidden>&gt&gt</div>
+								</div>
+							</div>
+						</div>`;
+			if(blockType == "G"){
+				outerHTML += 
+						CreateNewForm(newBlockID+"Start", sheetID)
+				+`		<div id="`+newBlockID+`Body" class="`+bodyClass+`">
+							<div id="`+newBlockID+`Start"></div>
+						</div>
+						<div class="sheet-export" data-export=")" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`"></div>`;//groupEnd
+			}
+			outerHTML += 
+				isStickyEditForm ? "</div>" 
+				:`		<div class="sheet-export" data-export="BLOCKEND" data-sheetID="`+sheetID+`" data-blockID="`+blockID+`"></div>
+					</div>
+					`+CreateNewForm(newBlockID+"End", sheetID)+`
+				</div>
+				<div id="`+newBlockID+`End"></div>`;
+			
+			document.getElementById(target).outerHTML = outerHTML;
+			if(blockType == "G")//Group border is solid by default
+				document.getElementById(newBlockID+"BorderEdit").value = "solid";
+
+			//Set StickyEditForm buttons
+			if(isStickyEditForm){
+				//DisplayById(newBlockID+"Edit", "none");
+				DisplayById(newBlockID+"EditForm", "block");
+				DisplayById(newBlockID+"Remove", "block");
+			}
+		}
+
+		//Setup StickyEditForm
+		function SetStickyEditFormButtons(){
+			let arrStickyEditFormButtons = document.getElementsByClassName("btn-sticky-edit-form");
+			for(let i = 0; i < arrStickyEditFormButtons.length; i++) {
+				arrStickyEditFormButtons[i].onclick = function() {
+					if(currStickyEditTargetSheetID != null && currStickyEditTargetBlockID != null && currStickyEditTargetBlockType != null){
+						let preTextBlockID = "s"+currStickyEditTargetSheetID+"b"+currStickyEditTargetBlockID;
+						let idEditingBlock = preTextBlockID;
+						let target = this.getAttribute("data-target"); 
+						if(target != "btn-block-remove"){
+							let preTextStickyEdit = "stickyEdit";
+							//Fetch Block data from sticky Edit Form
+							document.getElementById(preTextBlockID+"SbidEdit").value = document.getElementById(preTextStickyEdit+"SbidEdit").value;
+							document.getElementById(preTextBlockID+"WidthEdit").value = document.getElementById(preTextStickyEdit+"WidthEdit").value;
+							document.getElementById(preTextBlockID+"BorderEdit").value = document.getElementById(preTextStickyEdit+"BorderEdit").value;
+							if(!(currStickyEditTargetBlockType == "G")){
+								let valBlockText = currStickyEditTargetBlockType == "0" || currStickyEditTargetBlockType == "1" //if number, then parseInt
+									? parseInt(document.getElementById(preTextStickyEdit+"TextPlaceholder").value)  
+									: document.getElementById(preTextStickyEdit+"TextPlaceholder").value;
+								document.getElementById(preTextBlockID+"TextEdit").value = valBlockText;
+								document.getElementById(preTextBlockID+"TextPlaceholder").value = valBlockText;
+								document.getElementById(preTextBlockID+"FontSizeEdit").value = document.getElementById(preTextStickyEdit+"FontSizeEdit").value;
+								document.getElementById(preTextBlockID+"AlignEdit").value = document.getElementById(preTextStickyEdit+"AlignEdit").value;
+							}
+							idEditingBlock += (target == "btn-block-apply" ? "Apply" 
+											: (target == "btn-block-tgl-type" ? "TglType" 
+											: (target == "btn-block-duplicate" ? "Dupe" 
+											: (target == "btn-block-move-left-group" ? "MoveLG" 
+											: (target == "btn-block-move-left" ? "MoveL" 
+											: (target == "btn-block-move-right" ? "MoveR" 
+											: (target == "btn-block-move-right-group" ? "MoveRG" 
+											: null)))))));
+						}else{
+							idEditingBlock += "Remove";
+						}
+						document.getElementById(idEditingBlock).click();
+
+						//Clear sticky edit form after re-save actions
+						if(target != "btn-block-remove" && target != "btn-block-apply" && target != "btn-block-tgl-type")
+							ClearStickyEditForm();
+					}else{
+						alert("No block selected!");
+					}
+				}
+			}
+		}
+
 		//Create New Block
 		function CreateNewBlock(newBlock, overrideTarget = null, overrideSheetID = null, overrideBlockType = null){
 			let target = overrideTarget == null ? newBlock.getAttribute("data-target") : overrideTarget;
@@ -1744,109 +1989,14 @@
 			let blockType = overrideBlockType == null ? document.getElementById(target+"New").value : overrideBlockType; 
 			//ConLog("target: "+target+", sheetID: "+sheetID+", blockType: "+blockType);
 			if(blockType != null && blockType != ""){ 
-				//Set Sheet Block ID Count
-				let sheetBlockIDEditInput = document.getElementById("sheet"+sheetID+"SbidCount");
-				let sbid = sheetBlockIDEditInput.value;
-				sheetBlockIDEditInput.value = (sbid * 1) + 1;
 
 				//Set Block details
-				let containerMargin = 		blockType == "G" ? "" : " m-1 ";
-				let bodyClass = 			blockType == "G" ? "sheet-block w100" : " div-block-body ";
-				let editStart = 			blockType == "G" ? "(" : actionStat;
-				let editContainerWidth = 	blockType == "G" ? "100%" : "calc(100% - .5rem)";
-				let editBorder = 			blockType == "G" ? "solid" : "none"; 
 				let blockID = currentBlockID++;
 				let newBlockID = "s"+sheetID+"b"+blockID; //ConLog("newBlockID: "+newBlockID);
 
-				let outerHTML = 
-					"<div id=\""+target+"\"></div>"
-					+"<div id=\""+newBlockID+"\" class=\"sheet-block sheet-export\" data-export=\""+editStart+"\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" style=\"width: 100%;\">"
-					+"	<!-- Block "+blockID+" -->"
-					+"	<div id=\""+newBlockID+"Container\" class=\"sheet-container sheet-block border "+containerMargin+"\" data-sheetID=\""+sheetID+"\" style=\"border-style: "+editBorder+" !important; width: "+editContainerWidth+"; overflow:auto;\">";
-				if(blockType != "G"){ 
-					outerHTML += 
-					"		<div id=\""+newBlockID+"Body\" class=\""+bodyClass+"\" data-sheetID=\""+sheetID+"\"\>"
-					+"			<input id=\""+newBlockID+"TypeEdit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" value=\""+blockType+"\" hidden/>"
-					+"			<div id=\""+newBlockID+"Start\">";
-					outerHTML += (blockType == 1)//Dynamic Number
-							?	"	<input id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-sbid=\""+sbid+"\" title=\"Block Value\" placeholder=\"Block Value\" type=\"number\"/>" : "";
-					outerHTML += (blockType == 3)//Dynamic Text
-							?	"	<textarea id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-sbid=\""+sbid+"\" title=\"Block Text\" placeholder=\"Block Text\"  rows=\"4\"></textarea>" : "";
-					outerHTML += 
-					"			</div>"
-					+"		</div>";
-				}
-				outerHTML += 
-					"		<div id=\""+newBlockID+"EditTopBtns\" class=\"btn-block-edit-top-btns\" data-sheetID=\""+sheetID+"\">"
-					+"			<div id=\""+newBlockID+"Edit\" class=\"btn btn-block-edit\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" style=\"float: left; display: block;\">Edit</div>"
-					+"			<span class=\"mb-2\" style=\"margin: auto;\">&nbsp</span>"
-					+"			<div id=\""+newBlockID+"Remove\" class=\"btn btn-block-remove\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" style=\"float: right; display: none;\">Remove</div>"
-					+"		</div>"
-					+"		<div id=\""+newBlockID+"EditForm\" class=\"sheet-block w100 div-block-edit\" data-sheetID=\""+sheetID+"\" style=\"display: none;\">"
-					+"			<div class=\"sheet-block w100 border\" style=\" min-width: 300px;\">"
-				if(blockType == "G"){
-					outerHTML += 
-					"				<input id=\""+newBlockID+"SbidEdit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" title=\"Sheet Block ID.\" placeholder=\"Sheet Block ID.\" type=\"number\" value=\""+sbid+"\"/>"
-									+CreateSelectBlockEdit(sheetID, newBlockID, "Width")
-									+CreateSelectBlockEdit(sheetID, newBlockID, "Border")
-									+CreateSelectBlockEdit(sheetID, newBlockID, "Togglable");
-				}else{
-					let tempDisplay = (blockType == 1 || blockType == 3) ? ` style="display: none;"` : "";//Hide Placeholder if Dynamic Block
-					outerHTML += (blockType == 0 || blockType == 1)//Static or Dynamic Number
-							?	"	<input id=\""+newBlockID+"TextPlaceholder\" class=\"form-control\" data-sheetID=\""+sheetID+"\" title=\"Block Value\" placeholder=\"Block Value\" type=\"number\""+tempDisplay+" />"  : "";
-					outerHTML += (blockType == 2 || blockType == 3)//Static or Dynamic Text
-							?	"	<textarea id=\""+newBlockID+"TextPlaceholder\" class=\"form-control\" data-sheetID=\""+sheetID+"\" title=\"Block Text\" placeholder=\"Block Text\" rows=\"4\""+tempDisplay+"></textarea>" : "";
+				//Set Block Edit Form
+				CreateBlockEditForm(target, blockType, sheetID, blockID);
 
-					outerHTML += "	<div id=\""+newBlockID+"TextEditInner\"><span></span>";
-					outerHTML += (blockType == 0)//Static Number
-							?	"		<input id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-editType=\"text\" data-sbid=\""+sbid+"\" hidden/>" : "";
-					outerHTML += (blockType == 2)//Static Text
-							?	 "		<textarea id=\""+newBlockID+"TextEdit\" class=\"form-control sheet-export text-edit\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" data-editType=\"text\" data-sbid=\""+sbid+"\" hidden></textarea>" : "";
-					outerHTML += "	</div>";
-					outerHTML += 
-					"				<input id=\""+newBlockID+"SbidEdit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" title=\"Sheet Block ID.\" placeholder=\"Sheet Block ID.\" type=\"number\" value=\""+sbid+"\"/>"
-									+CreateSelectBlockEdit(sheetID, newBlockID, "Width")
-									+CreateSelectBlockEdit(sheetID, newBlockID, "Border")
-					+"				<input id=\""+newBlockID+"FontSizeEdit\" class=\"form-control sheet-export\" data-export=\"val\" data-sheetID=\""+sheetID+"\" data-editType=\"fontSize\" title=\"Block Font Size, by rem. Default 1.\" placeholder=\"Stat Font Size, by rem. Default 1.\" type=\"number\"/>"
-									+CreateSelectBlockEdit(sheetID, newBlockID, "Align")
-									+CreateSelectBlockEdit(sheetID, newBlockID, "Togglable");
-				}
-				let tempButton = (blockType == "G") ? "" //Group Blocks does not have the Toggle Type button
-					: "<div class=\"btn btn-block-tgl-type\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>Toggle Type</div>";
-				outerHTML += 
-					"			</div>"
-					+"			<div>"
-					+"				<div id=\""+newBlockID+"Apply\" class=\"btn btn-block-apply\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\">Apply</div>"
-					+"				<div style=\"float: right;\">"
-					+"					"+tempButton
-					+"					<div class=\"btn btn-block-duplicate\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>Duplicate</div>"
-					+"					<div class=\"btn btn-block-move-left-group\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>&lt&lt</div>"
-					+"					<div class=\"btn btn-block-move-left\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>&lt</div>"
-					+"					<div class=\"btn btn-block-move-right\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>&gt</div>"
-					+"					<div class=\"btn btn-block-move-right-group\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\" hidden>&gt&gt</div>"
-					+"				</div>"
-					+"			</div>"
-					+"		</div>";
-				if(blockType == "G"){
-					outerHTML += 
-							CreateNewForm(newBlockID+"Start", sheetID)
-					+"		<div id=\""+newBlockID+"Body\" class=\""+bodyClass+"\">"
-					+"			<div id=\""+newBlockID+"Start\"></div>"
-					+"		</div>"
-					+"		<div class=\"sheet-export\" data-export=\")\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\"></div>";//groupEnd
-				}
-				outerHTML += 
-					"		<div class=\"sheet-export\" data-export=\"BLOCKEND\" data-sheetID=\""+sheetID+"\" data-blockID=\""+blockID+"\"></div>"
-					+"	</div>"
-						+CreateNewForm(newBlockID+"End", sheetID)
-					+"</div>"
-					+"<div id=\""+newBlockID+"End\"></div>";
-
-				
-				document.getElementById(target).outerHTML = outerHTML;
-				if(blockType == "G"){//Group border is solid by default
-					document.getElementById(newBlockID+"BorderEdit").value = "solid";
-				}
 				if(overrideBlockType == null && overrideTarget == null) document.getElementById(target+"NewToggle").click();
 
 				SetTogglables();
@@ -1915,16 +2065,56 @@
 			let arrBlockEdit = document.getElementsByClassName("btn-block-edit");
 			for(let i = 0; i < arrBlockEdit.length; i++) {
 				arrBlockEdit[i].onclick = function() {
-					this.innerHTML = this.innerHTML == "Edit" ? "Close" : "Edit";
+					let sheetID = this.getAttribute("data-sheetID");
 					let blockDivID = GetBlockDivID(this);
-					if(this.innerHTML == "Edit"){
-						DisplayById(blockDivID+"EditForm", "none");
-						DisplayById(blockDivID+"Remove", "none");
-						DisplayById(blockDivID+"Body", "block");
-					}else{
-						DisplayById(blockDivID+"EditForm", "block");
-						DisplayById(blockDivID+"Remove", "block");
-						DisplayById(blockDivID+"Body", "none");
+					let isStickyEditON = document.getElementById("sheet"+sheetID+"EditStickyMode").innerHTML == "Toggle Edit using Sticky Window: ON";
+					if(isStickyEditON){
+
+						let prevBlockEdit = document.getElementById("s"+currStickyEditTargetSheetID+"b"+currStickyEditTargetBlockID+"Edit");
+						if(prevBlockEdit) prevBlockEdit.innerHTML = "Edit";
+						if(this.innerHTML != "Editing..."){
+
+							//Set Current Block being editied
+							this.innerHTML = "Editing...";
+							currStickyEditTargetSheetID = sheetID;
+							currStickyEditTargetBlockID = this.getAttribute("data-blockID");
+							currStickyEditTargetBlockType = GetBlockType(blockDivID);
+							document.getElementById("stickyEditFormHeader").innerHTML = "Editing Sheet: "+document.getElementById("tab"+currStickyEditTargetSheetID).innerHTML;
+
+							//Set Displays of the form's Inputs
+							let isBlockTypeG = currStickyEditTargetBlockType == "G";
+							let hiddenInputs = isBlockTypeG ? "none" : "block";
+							let preTextStickyEdit = "stickyEdit";
+							let preTextBlockID = "s"+currStickyEditTargetSheetID+"b"+currStickyEditTargetBlockID;
+							DisplayById(preTextStickyEdit+"TextPlaceholder", hiddenInputs);
+							DisplayById(preTextStickyEdit+"FontSizeEdit", hiddenInputs);
+							DisplayById(preTextStickyEdit+"AlignEdit", hiddenInputs);
+							//DisplayById("TogglableEdit", hiddenInputs);
+
+							//Fetch Block data
+							document.getElementById(preTextStickyEdit+"SbidEdit").value = document.getElementById(preTextBlockID+"SbidEdit").value;
+							document.getElementById(preTextStickyEdit+"WidthEdit").value = document.getElementById(preTextBlockID+"WidthEdit").value;
+							document.getElementById(preTextStickyEdit+"BorderEdit").value = document.getElementById(preTextBlockID+"BorderEdit").value;
+							if(!isBlockTypeG){
+								document.getElementById(preTextStickyEdit+"TextPlaceholder").value = document.getElementById(preTextBlockID+"TextEdit").value;
+								document.getElementById(preTextStickyEdit+"FontSizeEdit").value = document.getElementById(preTextBlockID+"FontSizeEdit").value;
+								document.getElementById(preTextStickyEdit+"AlignEdit").value = document.getElementById(preTextBlockID+"AlignEdit").value;
+							}
+						}else{
+							document.getElementById("stickyEditFormHeader").innerHTML = "Editing Nothing";
+						}
+
+					}else {
+						this.innerHTML = this.innerHTML == "Edit" ? "Close" : "Edit";
+						if(this.innerHTML == "Edit"){
+							DisplayById(blockDivID+"EditForm", "none");
+							DisplayById(blockDivID+"Remove", "none");
+							DisplayById(blockDivID+"Body", "block");
+						}else{
+							DisplayById(blockDivID+"EditForm", "block");
+							DisplayById(blockDivID+"Remove", "block");
+							DisplayById(blockDivID+"Body", "none");
+						}
 					}
 				}
 			}
@@ -2147,7 +2337,6 @@
 		var arrRollDice = null; //Format text string input to valid Array
 		var arrRollDiceLog = null; //Stores log data for display in html
 		var arrRollDiceSteps = null; //Stores optional parsing steps for display in html
-		var divDiceRoller = document.getElementById("divDiceRoller");
 		function isNumeric(str) {
 			return !isNaN(str) && !isNaN(parseFloat(str));
 		}
@@ -2366,27 +2555,42 @@
 			}
 		}
 		function OnloadForDiceRoller(){
-			document.getElementById("btnDiceRollerSticky").onclick = function() {
-				this.innerHTML = this.innerHTML == "Sticky" ? "Unstuck" : "Sticky";
-				if(divDiceRoller.classList.contains('dr-stuck')){
-					divDiceRoller.classList.remove('dr-stuck');
-					document.getElementById("homeDiceRoller").appendChild(divDiceRoller);
-				}else{
-					divDiceRoller.classList.add('dr-stuck');
-					document.getElementById("footer").appendChild(divDiceRoller);
-				}
-			}
 			let arrQDice = document.getElementsByClassName("q-dice");
 			for(let i = 0; i < arrQDice.length; i++) {
 				ApplyQuickDice(arrQDice[i]);
 			}
-			document.getElementById("btnDiceRollerMin").onclick = function() {
-				this.innerHTML = this.innerHTML == "Minimize" ? "Open" : "Minimize";
-				ToggleDisplayById("bodyDiceRoller");
-			}
 			document.getElementById("tglDiceRollLog").onclick = function() {
 				this.innerHTML = this.innerHTML == "Show Log:" ? "Dice Roll Log:" : "Show Log:";
 				ToggleDisplayById("divDiceRollLog");
+			}
+		}
+		function OnloadForStickyDivs(){
+			let arrBtnToggleSticky = document.getElementsByClassName("btn-tgl-sticky");
+			for(let i = 0; i < arrBtnToggleSticky.length; i++) {
+				arrBtnToggleSticky[i].onclick = function() {
+					let target = this.getAttribute("data-target"); 
+					let divSticky = document.getElementById(target);
+					this.innerHTML = this.innerHTML == "Sticky" ? "Unstuck" : "Sticky";
+					if(divSticky.classList.contains('dr-stuck')){
+						let idTargetDiv = (target == "divDiceRoller" ? "homeDiceRoller" 
+										: (target == "divFixedEditForm" ? "homeFixedEditForm" 
+										: "ERR"));
+						if(idTargetDiv != "ERR"){
+							divSticky.classList.remove('dr-stuck');
+							document.getElementById(idTargetDiv).appendChild(divSticky);
+						}
+					}else{
+						divSticky.classList.add('dr-stuck');
+						document.getElementById("footer").appendChild(divSticky);
+					}
+				}
+			}
+			let arrBtnStickyDisplay = document.getElementsByClassName("btn-tgl-sticky-display");
+			for(let i = 0; i < arrBtnStickyDisplay.length; i++) {
+				arrBtnStickyDisplay[i].onclick = function() {
+					this.innerHTML = this.innerHTML == "Minimize" ? "Open" : "Minimize";
+					ToggleDisplayById(this.getAttribute("data-target"));
+				}
 			}
 		}
 
@@ -2424,10 +2628,11 @@ At the bottom right you should see a Dice Roller and the buttons: "Unstuck" and 
 <ul>
   <li>"Unstuck/Sticky": Send the Dice Roller to the Home tab or stick it back to the bottom right</li>
   <li>"Open/Minimize": Show or hide the contents of the Dice Roller</li>
-</ul>!b!1!b!100%!b!none!b!1!b!left!b!0!b!!S!!b!2!b!Now come find this block by clicking the "Edit Sheet". This block should be the 2nd thing with a dashed border.<br>
-When you find it click the "Edit" Button and open up the text area.
-
-You should find a hidden text here...
+</ul>!b!1!b!100%!b!none!b!1!b!left!b!0!b!!S!!b!2!b!Now come find this block by clicking the "Edit Sheet". <br>
+When editing a sheet you can find a button at the lower portion of the sheet details called "Toggle Edit using Sticky Window: OFF". Toggling this ON will pop up a sticky window at the lower right side of your screen where you can see and edit each block from that window instead of the block's own dimension. Useful for when dealing with blocks with limited space.<br>
+This block should be the 2nd thing with a dashed border. When you find it click the "Edit" Button and open up the text area.
+<br><br>
+You should find hidden text here...
 <!-- Hi! This hidden text is an HTML comment. -->
 <!-- 
 Block contents will be read as raw HTML so you'll want to know the basics, if you want to make it prettier that is. At the very least you should know <br> which is a line break or the equivalent to pressing the "Enter" key and the next line of text showing up bellow. 
@@ -2477,6 +2682,7 @@ Bottom Right we see some advanced tools.
 -->
 Advanced Tools:
 <ul>
+  <li>Toggle Type: If the block is text or number you can toggle between Static and Dynamic. </li>
   <li>Duplicate: Copy the block and everything in it. The duplicate will be placed just after the original block. </li>
   <li>&lt&lt : Move this block to the left. If the previous block is a group, move this block to before the start of that group. </li>
   <li>&lt : Move this block to the left. If the previous block is a group, move this block inside the group towards the end.</li>
@@ -2790,6 +2996,7 @@ Terrain can be both Difficult and Dangerous.!b!48!b!100%!b!none!b!1!b!left!b!0!b
 			SetTogglables();
 			OnloadForSettings();
 			OnloadForTabs();
+			OnloadForStickyDivs();
 			OnloadForDiceRoller();
 			
 			
@@ -2801,6 +3008,11 @@ Terrain can be both Difficult and Dangerous.!b!48!b!100%!b!none!b!1!b!left!b!0!b
 			//Initial display of Dice Roller
 			document.getElementById("btnDiceRollerSticky").click();
 			document.getElementById("btnDiceRollerMin").click();
+
+			//Initial display of Sticky Edit Form
+			document.getElementById("btnFixedEditFormMin").click();
+			CreateBlockEditForm("containerFixedEditForm", "isStickyEditForm");
+			SetStickyEditFormButtons();
 
 			//*
 			UpdateUserData();
